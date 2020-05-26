@@ -9,8 +9,11 @@ public class AgentType implements Serializable {
 	private String name;
 	private String module;
 	
-	public AgentType(String name, String module) {
-		super();
+	public AgentType() {
+		
+	}
+	
+	public AgentType(String module, String name) {
 		this.name = name;
 		this.module = module;
 	}

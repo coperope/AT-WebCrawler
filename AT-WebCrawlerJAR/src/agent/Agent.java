@@ -6,6 +6,8 @@ import message.ACLMessage;
 
 public interface Agent extends Serializable{
 
+	void init(AID id);
+	
 	void handleMessage(ACLMessage msg);
 
 	AID getAid();
