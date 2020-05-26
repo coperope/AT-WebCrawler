@@ -27,15 +27,7 @@ public class AgentTypesJndiFinder {
 	
 	@PostConstruct
 	public void postConstruct() {
-		Hashtable<String, Object> jndiProps = new Hashtable<>();
-		jndiProps.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
-		try {
-			context = new InitialContext(jndiProps);
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//context = ContextFactory.get(null);
+		context = ContextFactory.get(null);
 	}
 
 	public List<AgentType> parse() throws NamingException {
@@ -86,12 +78,12 @@ public class AgentTypesJndiFinder {
 	private AgentType parseEjbName(String parentModule, String module, String ejbName) {
 		ejbName = extractAgentName(ejbName);
 		//if (!ignored.contains(ejbName)) {
-			String path;
+			//String path;
 			if (parentModule.equals("")) {
-				path = String.format("/%s/agents/xjaf", module);
+				//path = String.format("/%s/agents/xjaf", module);
 				return new AgentType(module, ejbName);
 			} else {
-				path = String.format("/%s/%s/agents/xjaf", parentModule, module);
+				//path = String.format("/%s/%s/agents/xjaf", parentModule, module);
 				return new AgentType(parentModule + "/" + module, ejbName);
 			}
 		//}

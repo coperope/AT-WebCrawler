@@ -1,21 +1,20 @@
 package agent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import node.AgentCenter;
 import util.AgentTypesJndiFinder;
+import util.ObjectFactory;
 
 @Singleton
 @Remote(AgentManager.class)
@@ -26,21 +25,10 @@ public class AgentManagerBean implements AgentManager {
 	
 	@EJB
 	private AgentTypesJndiFinder agentTypesFinder;
-	
-	private Context context;
-	
+		
 	@PostConstruct
 	public void postConstruct() {
 		agents = new HashMap<AID, Agent>();
-		Hashtable<String, Object> jndiProps = new Hashtable<>();
-		jndiProps.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
-		//jndiProps.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory"); 
-		//jndiProps.put(Context.PROVIDER_URL,"http-remoting://localhost:8080");
-		try {
-			context = new InitialContext(jndiProps);
-		} catch (NamingException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@Override
@@ -54,8 +42,21 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public List<AID> getRunningAgents() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<AID> set = agents.keySet();
+		if (set.size() > 0) {
+			AID aid = set.iterator().next();
+			try {
+				try {
+					ObjectFactory.lookup(getAgentLookup(aid.getType(), true), Agent.class, null);
+				} catch (Exception ex) {
+					ObjectFactory.lookup(getAgentLookup(aid.getType(), false), Agent.class, null);
+				}
+			} catch (Exception ex) {
+				set.remove(aid);
+				agents.remove(aid);
+			}
+		}
+		return new ArrayList<AID>(set);
 	}
 
 	@Override
@@ -64,17 +65,15 @@ public class AgentManagerBean implements AgentManager {
 
 		AID aid = new AID(name, type, host);
 		Agent agent = null;
+
 		try {
-			try {
-				String path = getAgentLookup(aid.getType(), true);
-				agent = (Agent) context.lookup(path);
-			} catch (IllegalStateException ex) {
-				String path = getAgentLookup(aid.getType(), true);
-				agent = (Agent) context.lookup(path);
-			}
-		} catch (NamingException e) {
-			e.printStackTrace();
+			String path = getAgentLookup(aid.getType(), true);
+			agent = ObjectFactory.lookup(path, Agent.class, null);
+		} catch (IllegalStateException ex) {
+			String path = getAgentLookup(aid.getType(), true);
+			agent = ObjectFactory.lookup(path, Agent.class, null);
 		}
+
 		agents.put(aid, agent);
 		agent.init(aid);
 		
@@ -83,8 +82,11 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public void stopAgent(AID aid) {
-		// TODO Auto-generated method stub
-		
+		Agent agent = agents.get(aid);
+		if (agent != null) {
+			agent.stop();
+			agents.remove(aid);
+		}
 	}
 	
 	private String getAgentLookup(AgentType agType, boolean stateful) {
