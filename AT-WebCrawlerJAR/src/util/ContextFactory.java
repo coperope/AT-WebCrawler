@@ -13,12 +13,6 @@ public class ContextFactory {
 	private static Context context;
 	private static Context remoteContext;
 
-	/*
-	 * java.naming.factory.url.pkgs=org.jboss.ejb.client.naming
-	 * java.naming.factory.initial=org.jboss.naming.remote.client.
-	 * InitialContextFactory java.naming.provider.url=http-remoting://maja:8080
-	 */
-
 	static {
 		try {
 			Hashtable<String, Object> jndiProps = new Hashtable<>();

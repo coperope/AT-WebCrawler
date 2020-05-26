@@ -18,15 +18,15 @@ public class ObjectFactory {
 	public static final String AgentManagerLookup = "ejb:" + PROJECT_EAR + "/" + PROJECT_MODULE + "//"
 			+ AgentManagerBean.class.getSimpleName() + "!" + AgentManager.class.getName();
 	public static final String ClientRestControllerLookup = "ejb:" + PROJECT_EAR + "/" + PROJECT_MODULE + "//"
-			+ ClientControllerRemote.class.getSimpleName() + "!" + ClientControllerRemote.class.getName()
-			+ "?stateful";
+			+ ClientController.class.getSimpleName() + "!" + ClientControllerRemote.class.getName();
+			//+ "?stateful";
 
 	public static AgentManager getAgentManager(AgentCenter remote) {
 		return lookup(AgentManagerLookup, AgentManager.class, remote);
 	}
 
 	public static ClientControllerRemote getClientRestController(AgentCenter remote) {
-		return lookup(ClientRestControllerLookup, ClientController.class, remote);
+		return lookup(ClientRestControllerLookup, ClientControllerRemote.class, remote);
 	}
 
 	public static SessionContext getSessionContext() {

@@ -39,10 +39,6 @@ public class ClientController implements ClientControllerRemote{
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<AgentType> getAvailableAgentClasses(){
-		//Testing purposes
-		//AgentType cls = new AgentType("AT-WebCrawlerEAR/AT-WebCrawlerJAR", "TestAgent");
-		//agm.startServerAgent(cls, "test");
-		//
 		return agm.getAvailableAgentClasses();
 	}
 	
