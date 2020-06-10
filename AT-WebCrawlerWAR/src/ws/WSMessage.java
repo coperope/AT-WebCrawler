@@ -9,6 +9,7 @@ import agent.AID;
 import agent.Agent;
 import agent.AgentType;
 
+
 public class WSMessage {
 
 	@Enumerated(EnumType.STRING)

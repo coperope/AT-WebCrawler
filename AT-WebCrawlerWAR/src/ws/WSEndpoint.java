@@ -32,6 +32,7 @@ public class WSEndpoint {
 
 	@OnOpen
 	public void onOpen(Session session) throws IOException {
+		System.out.println("Kreirana sesija");
 		if (!sessions.contains(session)) {
 			sessions.add(session);
 		}
@@ -39,6 +40,7 @@ public class WSEndpoint {
 
 	@OnMessage
 	public void sendMessage(String jsonString) throws IOException {
+		System.out.println("Poslata poruka ws: " + jsonString);
 		for (Session s : sessions) {
 			s.getBasicRemote().sendText(jsonString);
 		}

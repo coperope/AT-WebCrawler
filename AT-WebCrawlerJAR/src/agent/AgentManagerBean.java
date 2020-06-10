@@ -27,7 +27,9 @@ public class AgentManagerBean implements AgentManager {
 	
 	@EJB
 	private AgentTypesJndiFinder agentTypesFinder;
-		
+	@EJB
+	private WSMessageCreator wsMessageCreator;
+	
 	@PostConstruct
 	public void postConstruct() {
 		agents = new HashMap<AID, Agent>();
@@ -80,7 +82,7 @@ public class AgentManagerBean implements AgentManager {
 		agent.init(aid);
 		
 		try {
-			WSMessageCreator.sendActiveAgents(getRunningAgents());
+			wsMessageCreator.sendActiveAgents(getRunningAgents());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
