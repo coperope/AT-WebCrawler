@@ -7,22 +7,30 @@ import agent.AgentManager;
 import agent.AgentManagerBean;
 import controller.ClientController;
 import controller.ClientControllerRemote;
+import message.MessageManager;
+import message.MessageManagerBean;
 import node.AgentCenter;
 
 public class ObjectFactory {
-	static String PROJECT_MODULE = "AT-WebCrawlerJAR";
-	static String PROJECT_EAR = "AT-WebCrawlerEAR";
-	static String PROJECT_WAR = "AT-WebCrawlerWAR";
+	public static String PROJECT_MODULE = "AT-WebCrawlerJAR";
+	public static String PROJECT_EAR = "AT-WebCrawlerEAR";
+	public static String PROJECT_WAR = "AT-WebCrawlerWAR";
 	
 
 	public static final String AgentManagerLookup = "ejb:" + PROJECT_EAR + "/" + PROJECT_MODULE + "//"
 			+ AgentManagerBean.class.getSimpleName() + "!" + AgentManager.class.getName();
+	public static final String MessageManagerLookup = "ejb:" + PROJECT_EAR + "/" + PROJECT_MODULE + "//"
+			+ MessageManagerBean.class.getSimpleName() + "!" + MessageManager.class.getName();
 	public static final String ClientRestControllerLookup = "ejb:" + PROJECT_EAR + "/" + PROJECT_MODULE + "//"
 			+ ClientController.class.getSimpleName() + "!" + ClientControllerRemote.class.getName();
 			//+ "?stateful";
 
 	public static AgentManager getAgentManager(AgentCenter remote) {
 		return lookup(AgentManagerLookup, AgentManager.class, remote);
+	}
+	
+	public static MessageManager getMessageManager(AgentCenter remote) {
+		return lookup(MessageManagerLookup, MessageManager.class, remote);
 	}
 
 	public static ClientControllerRemote getClientRestController(AgentCenter remote) {
