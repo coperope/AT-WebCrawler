@@ -93,6 +93,7 @@ public class MessageManagerBean implements MessageManager {
 				throw new IllegalArgumentException("AID cannot be null.");
 			}
 			postToReceiver(msg, i, delayMillisec);
+			
 		}
 	}
 
