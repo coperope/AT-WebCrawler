@@ -1,6 +1,6 @@
 /build/
 
 # Eclipse
-.classpath
-.project
-.settings/
+# .classpath
+# .project
+# .settings/
