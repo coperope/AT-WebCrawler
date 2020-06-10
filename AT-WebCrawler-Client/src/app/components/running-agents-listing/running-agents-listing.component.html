@@ -1,0 +1,55 @@
+<div class="shadow-sm  m-1 bg-white rounded">
+
+  <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+    <h5>Running agents</h5>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 form-group form-inline d-flex justify-content-center m-2 p-2">
+      <input class="form-control ml-2" type="text" name="filter" placeholder="Search by name" [(ngModel)]="filterName"
+        (ngModelChange)="onSearchName()" />
+    </div>
+    <div class="col-sm-4 form-group form-inline d-flex justify-content-center m-2 p-2">
+      <input class="form-control ml-2" type="text" name="filter" placeholder="Search by type" [(ngModel)]="filterType"
+        (ngModelChange)="onSearchType()" />
+    </div>
+  </div>
+  
+
+  <div class="agents-list">
+    <ul class="list-group ">
+      <li class="list-group-item justify-content-between align-items-center list-group-item-secondary">
+        <div class="agent-div" style="float: left; ">
+          <p><b>Name</b></p>
+        </div>
+        <div class="agent-div" style="float: left;">
+          <p><b>Type</b></p>
+        </div>
+        <div class="agent-div" style="float: left;">
+          <p><b>Host</b></p>
+        </div>
+        <div class="agent-div" style="float: right;">
+          <p style="float: right;"><b>Actions</b></p>
+        </div>
+      </li>
+      <li class="list-group-item justify-content-between align-items-center" *ngFor="let agent of fiteredRunningAgents">
+        <div class="agent-div" style="float: left;">
+          <p>{{agent.name}}</p>
+        </div>
+        <div class="agent-div" style="float: left;">
+          <p>{{agent.type.name}}</p>
+        </div>
+        <div class="agent-div" style="float: left;">
+          <p>{{agent.host.address}}</p>
+        </div>
+        <div class="agent-div-action" style="float: right;">
+          <img src="assets/stop.png" alt="" data-toggle="tooltip" title="Stop agent">
+        </div>
+        <div class="agent-div-action" style="float: right;">
+          <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message">
+        </div>
+      </li>
+    </ul>
+  </div>
+
+
+</div>
