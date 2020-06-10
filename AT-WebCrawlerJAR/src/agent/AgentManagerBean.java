@@ -109,4 +109,7 @@ public class AgentManagerBean implements AgentManager {
 		}
 	}
 
+	public Agent getAgent(AID aid) {
+		return agents.get(aid);
+	}
 }
