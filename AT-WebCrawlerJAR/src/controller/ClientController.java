@@ -61,8 +61,12 @@ public class ClientController implements ClientControllerRemote{
 	@Path("/agents/running/{type}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public AID startAgentOfType(@PathParam("name") String name, @PathParam("type") String type ){
-		AgentType at = new AgentType("AT-WebCrawlerEAR/AT-WebCrawlerJAR", type);
-		return agm.startServerAgent(at, name);
+		List<AgentType> agentTypes = agm.getAvailableAgentClasses();
+		for (AgentType agentType : agentTypes) {
+			if(agentType.getName().equals(type)) {
+				return agm.startServerAgent(agentType, name);
+			}
+		}
 	}
 
 	@DELETE
