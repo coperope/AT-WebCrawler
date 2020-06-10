@@ -1,5 +1,6 @@
 package agent;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.naming.NamingException;
 import node.AgentCenter;
 import util.AgentTypesJndiFinder;
 import util.ObjectFactory;
+import util.WSMessageCreator;
 
 @Singleton
 @Remote(AgentManager.class)
@@ -76,6 +78,12 @@ public class AgentManagerBean implements AgentManager {
 
 		agents.put(aid, agent);
 		agent.init(aid);
+		
+		try {
+			WSMessageCreator.sendActiveAgents(getRunningAgents());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		return aid;
 	}

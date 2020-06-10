@@ -1,12 +1,16 @@
 package ws;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -15,67 +19,40 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
+
+import util.JSON;
+
 @Singleton
 @LocalBean
-@ServerEndpoint(value="/ws/{username}")
+@ServerEndpoint(value = "/ws")
 public class WSEndpoint {
-	private static Map<String, Session> sessions = Collections
-			.synchronizedMap(new HashMap<String, Session>());
-	private static Map<String, String> sessionToUser = Collections
-			.synchronizedMap(new HashMap<String, String>());
-	
-    @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) throws IOException {
-    	sessions.put(username, session);
-    	sessionToUser.put(session.getId(), username);
-    }
-    
-//    public void broadcast(String message) {
-//    	for (Session session: sessions.values()) {
-//    		try {
-//				session.getBasicRemote().sendText(message);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//    	}
-//    }
-    
-//    public void sendToOne(String username, String message) {
-//    	if (sessions.containsKey(username)) {
-//    		try {
-//				sessions.get(username).getBasicRemote().sendText(message);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//    	}
-//    }
-    
-//    public void updateLoggedInUsers(String users) {
-//    	for (Session session: sessions.values()) {
-//    		try {
-//				session.getBasicRemote().sendText(users);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//    	}
-//    }
-	
-    @OnMessage
-    public void onMessage(String message) {
-    	
-    }
-	
+	private static List<Session> sessions = new ArrayList<Session>();
+
+	@OnOpen
+	public void onOpen(Session session) throws IOException {
+		if (!sessions.contains(session)) {
+			sessions.add(session);
+		}
+	}
+
+	@OnMessage
+	public void sendMessage(String jsonString) throws IOException {
+		for (Session s : sessions) {
+			s.getBasicRemote().sendText(jsonString);
+		}
+	}
+
 	@OnClose
 	public void close(Session session) throws IOException {
-		String username = sessionToUser.get(session.getId());
-		sessions.remove(username);
+		sessions.remove(session);
 		session.close();
 	}
-	
+
 	@OnError
 	public void error(Session session, Throwable t) throws IOException {
-		String username = sessionToUser.get(session.getId());
-		sessions.remove(username);
+		sessions.remove(session);
 		session.close();
 		t.printStackTrace();
 	}
