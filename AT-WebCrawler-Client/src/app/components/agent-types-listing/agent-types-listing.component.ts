@@ -52,18 +52,15 @@ export class AgentTypesListingComponent implements OnInit {
     if (!this.newAgent.type) {
       return;
     }
-    console.log(this.newAgent);
 
     this.mainService.startAgent(this.newAgent.type, this.newAgent.name).subscribe(
       (data: Array<AgentType>) => {
-        //this.newAgent = new AID();
-        //this.newAgent.name = '';
+        this.modalService.dismissAll();
+        this.newAgent = new AID();
       },
       (error) => {
         alert(error);
       }
     );
-
-
   }
 }

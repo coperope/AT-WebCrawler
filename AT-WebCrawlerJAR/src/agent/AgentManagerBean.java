@@ -96,6 +96,11 @@ public class AgentManagerBean implements AgentManager {
 		if (agent != null) {
 			agent.stop();
 			agents.remove(aid);
+			try {
+				wsMessageCreator.sendActiveAgents(getRunningAgents());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

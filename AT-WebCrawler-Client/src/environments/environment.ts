@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:8080/AT-WebCrawlerWAR/rest/client',
+  WS_URL: 'ws://localhost:8080/AT-WebCrawlerWAR/ws',
+
 };
 
 /*

@@ -2,15 +2,13 @@ import { Performative } from './Performative.model';
 import { AID } from './AID.model';
 
 export class ACLMessage {
-  performative: Performative;
+  performative: string;
   sender: AID;
-  recievers: Array<AID>;
+  receivers: Array<AID>;
   content: string;
 
-  constructor(performative: Performative, sender: AID, recievers: Array<AID>, content: string) {
-    this.performative = performative;
-    this.sender = sender;
-    this.recievers = recievers;
-    this.content = content;
+  constructor() {
+    this.receivers = new Array<AID>();
+    this.sender = new AID();
   }
 }

@@ -49,8 +49,6 @@ export class MainServiceService {
   }
 
   startAgent(type: AgentType, name: string) {
-    console.log(type.name);
-    console.log(name);
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

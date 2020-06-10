@@ -4,10 +4,17 @@
       <app-agent-types-listing [agentTypes]="agentTypes"></app-agent-types-listing>
     </div>
     <div class="col-sm-8">
-      <app-running-agents-listing [runningAgents]="runningAgents"></app-running-agents-listing>
+      <app-running-agents-listing [runningAgents]="runningAgents" [performatives]="performatives"></app-running-agents-listing>
+    </div>
+  </div>
+  <div class="row" style="padding-top: 20px;">
+    <div class="col-sm-12 form-group form-inline d-flex justify-content-center mt-2 pt-2">
+      <h5>Logs: </h5>
+    </div>
+    <div class="col-sm-12">
+      <textarea class="form-control" rows="12" style="width: 100%; overflow: auto;" disabled>{{logs}}</textarea>
     </div>
 
-    
   </div>
 
 </div>
