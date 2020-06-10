@@ -67,6 +67,7 @@ public class ClientController implements ClientControllerRemote{
 				return agm.startServerAgent(agentType, name);
 			}
 		}
+		return new AID();
 	}
 
 	@DELETE
