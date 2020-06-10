@@ -10,13 +10,17 @@ import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import agent.AID;
 import agent.AgentManager;
 import agent.AgentType;
+import message.ACLMessage;
 import message.Performative;
 
 @Stateless
@@ -49,11 +53,26 @@ public class ClientController implements ClientControllerRemote{
 		return agm.getRunningAgents();
 	}
 	
+	@PUT
+	@Path("/agents/running/{type}/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public AID startAgentOfType(@PathParam("name") String name, @PathParam("type") AgentType type ){
+		return agm.startServerAgent(type, name);
+	}
+	
 	@DELETE
 	@Path("/agents/running")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void stopAgent(AID aid) {
 		agm.stopAgent(aid);
+	}
+	
+	@POST
+	@Path("/messages")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void sendMessage(ACLMessage message) {
+		
+		
 	}
 	
 	@GET
