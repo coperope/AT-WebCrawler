@@ -56,6 +56,16 @@ public class AID implements Serializable {
 		return host;
 	}
 	
+	
+	
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
 	@Override
 	public int hashCode() {
 		return str.hashCode();
