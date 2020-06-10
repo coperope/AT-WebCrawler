@@ -61,10 +61,15 @@ public class ClientController implements ClientControllerRemote{
 	@Path("/agents/running/{type}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public AID startAgentOfType(@PathParam("name") String name, @PathParam("type") String type ){
-		AgentType at = new AgentType("AT-WebCrawlerEAR/AT-WebCrawlerJAR", type);
-		return agm.startServerAgent(at, name);
+		List<AgentType> agentTypes = agm.getAvailableAgentClasses();
+		for (AgentType agentType : agentTypes) {
+			if(agentType.getName().equals(type)) {
+				return agm.startServerAgent(agentType, name);
+			}
+		}
+		return new AID();
 	}
-	
+
 	@DELETE
 	@Path("/agents/running")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -76,10 +81,10 @@ public class ClientController implements ClientControllerRemote{
 	@Path("/messages")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendMessage(ACLMessage message) {
-		
-		
+		System.out.println("Odje saljem poruku");
+		msm.post(message);
 	}
-	
+
 	@GET
 	@Path("/messages")
 	@Produces(MediaType.APPLICATION_JSON)

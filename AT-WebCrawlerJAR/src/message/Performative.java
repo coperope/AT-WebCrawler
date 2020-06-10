@@ -26,7 +26,7 @@ public enum Performative implements Serializable{
 	REQUEST_WHENEVER, 
 	SUBSCRIBE,
 	RESUME;
-	
+
 	public String getPerformative() {
         return this.name();
     }
