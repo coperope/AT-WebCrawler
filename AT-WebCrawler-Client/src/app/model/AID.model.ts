@@ -7,10 +7,12 @@ export class AID {
   host: AgentCenter;
   str: string;
 
-  constructor(name: string, type: AgentType, host: AgentCenter, str: string){
-    this.name = name;
-    this.type = type;
-    this.host = host;
-    this.str = str;
+  constructor(){
   }
+  // constructor(name: string, type: AgentType, host: AgentCenter, str: string){
+  //   this.name = name;
+  //   this.type = type;
+  //   this.host = host;
+  //   this.str = str;
+  // }
 }
