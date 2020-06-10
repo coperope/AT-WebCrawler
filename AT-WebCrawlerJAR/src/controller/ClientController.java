@@ -76,8 +76,8 @@ public class ClientController implements ClientControllerRemote{
 	@Path("/messages")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendMessage(ACLMessage message) {
-
-
+		System.out.println("Odje saljem poruku");
+		msm.post(message);
 	}
 
 	@GET

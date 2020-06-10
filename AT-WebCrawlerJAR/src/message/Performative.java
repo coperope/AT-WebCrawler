@@ -23,5 +23,9 @@ public enum Performative {
 	REQUEST_WHEN, 
 	REQUEST_WHENEVER, 
 	SUBSCRIBE,
-	RESUME
+	RESUME;
+	
+	public String getPerformative() {
+		return this.name();
+	}
 }

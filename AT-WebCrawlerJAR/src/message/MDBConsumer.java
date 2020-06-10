@@ -15,7 +15,7 @@ import agent.AgentManagerBean;
 
 @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/queue/siebog")
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/queue/mojQueue")
 })
 public class MDBConsumer implements MessageListener {
 
@@ -26,6 +26,7 @@ public class MDBConsumer implements MessageListener {
 	public void onMessage(Message msg) {
 		try {
 			processMessage(msg);
+			
 		} catch (JMSException ex) {
 			System.out.println("Cannot process an incoming message.");
 		}
@@ -35,6 +36,7 @@ public class MDBConsumer implements MessageListener {
 		ACLMessage acl = (ACLMessage) ((ObjectMessage) msg).getObject();
 		AID aid = getAid(msg, acl);
 		deliverMessage(acl, aid);
+		
 	}
 	
 	private AID getAid(Message msg, ACLMessage acl) throws JMSException {
@@ -46,6 +48,7 @@ public class MDBConsumer implements MessageListener {
 	private void deliverMessage(ACLMessage msg, AID aid) {
 		Agent agent = agm.getAgent(aid);
 		if (agent != null) {
+			System.out.println("Odje agent obradjuje poruku");
 			agent.handleMessage(msg);
 		} else {
 			System.out.println("No such agent: {}");
