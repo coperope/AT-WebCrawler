@@ -8,11 +8,9 @@ import javax.ejb.Stateful;
 
 import agent.AID;
 import agent.Agent;
-import agent.AgentType;
 import agent.BaseAgent;
 import message.ACLMessage;
 import message.Performative;
-import util.ObjectFactory;
 import util.WSMessageCreator;
 
 @Stateful
@@ -26,6 +24,7 @@ public class ReciverContractNet extends BaseAgent {
 
 	@Override
 	public void init(AID id) throws IOException {
+		this.id = id;
 		wsMessageCreator.log("ReciverContractNet agent created");
 	}
 

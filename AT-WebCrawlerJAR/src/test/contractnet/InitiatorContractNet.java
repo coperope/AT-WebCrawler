@@ -12,6 +12,7 @@ import agent.AgentType;
 import agent.BaseAgent;
 import message.ACLMessage;
 import message.Performative;
+import node.AgentCenter;
 import util.ObjectFactory;
 import util.WSMessageCreator;
 
@@ -26,6 +27,7 @@ public class InitiatorContractNet extends BaseAgent {
 
 	@Override
 	public void init(AID id) throws IOException {
+		this.id = id;
 		wsMessageCreator.log("InitiatorContractNet agent created");
 	}
 
@@ -37,8 +39,9 @@ public class InitiatorContractNet extends BaseAgent {
 
 			wsMessageCreator.log("Initiator received request to start the job");
 
+			AgentCenter host = new AgentCenter("localhost", "test");
 			AID reciver = new AID(msg.content,
-					new AgentType(ObjectFactory.PROJECT_MODULE, ReciverContractNet.class.getSimpleName()), null);
+					new AgentType(ObjectFactory.PROJECT_MODULE, ReciverContractNet.class.getSimpleName()), host);
 			ACLMessage qmsg = new ACLMessage(Performative.CALL_FOR_PROPOSAL);
 			qmsg.receivers.add(reciver);
 			qmsg.ontology = "Yellow House";

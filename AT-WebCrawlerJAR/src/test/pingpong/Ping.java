@@ -1,10 +1,6 @@
 package test.pingpong;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.ejb.EJB;
 import javax.ejb.Remote;
@@ -31,6 +27,7 @@ public class Ping extends BaseAgent {
 
 	@Override
 	public void init(AID id) throws IOException {
+		this.id = id;
 		wsMessageCreator.log("Ping agent created");
 	}
 
@@ -38,9 +35,11 @@ public class Ping extends BaseAgent {
 	public void handleMessage(ACLMessage msg) throws IOException {
 		wsMessageCreator.log("Ping agent handle message");
 		if (msg.performative == Performative.REQUEST) {
+			AgentCenter host = new AgentCenter("localhost", "test");
 			AID pongAid = new AID(msg.content, new AgentType(ObjectFactory.PROJECT_MODULE, Pong.class.getSimpleName()),
-					null);
+					host);
 			ACLMessage msgToPong = new ACLMessage(Performative.REQUEST);
+			msgToPong.replyTo = id;
 			msgToPong.sender = id;
 			msgToPong.receivers.add(pongAid);
 

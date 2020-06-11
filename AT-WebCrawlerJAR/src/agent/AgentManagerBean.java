@@ -78,8 +78,8 @@ public class AgentManagerBean implements AgentManager {
 			agent = ObjectFactory.lookup(path, Agent.class, null);
 		}
 
-		agents.put(aid, agent);
 		agent.init(aid);
+		agents.put(aid, agent);
 		
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());

@@ -39,4 +39,8 @@ public abstract class BaseAgent implements Agent{
 		return msm;
 	}
 
+	public MessageManager getMsm() {
+		return msm;
+	}
+
 }

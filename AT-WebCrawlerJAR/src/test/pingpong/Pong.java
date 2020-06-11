@@ -8,16 +8,16 @@ import javax.ejb.Stateful;
 
 import agent.AID;
 import agent.Agent;
-import agent.AgentType;
 import agent.BaseAgent;
 import message.ACLMessage;
 import message.Performative;
-import util.ObjectFactory;
 import util.WSMessageCreator;
 
 @Stateful
 @Remote(Agent.class)
 public class Pong extends BaseAgent {
+
+	private static final long serialVersionUID = 1L;
 
 	private int counter;
 
@@ -25,7 +25,8 @@ public class Pong extends BaseAgent {
 	WSMessageCreator wsMessageCreator;
 
 	@Override
-	public void init(AID id) throws IOException {
+	public void init(AID id) throws IOException{
+		this.id = id;
 		this.counter = 0;
 		wsMessageCreator.log("Pong agent created");
 	}
