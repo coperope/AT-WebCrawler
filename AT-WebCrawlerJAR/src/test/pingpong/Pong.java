@@ -1,4 +1,4 @@
-package test;
+package test.pingpong;
 
 import java.io.IOException;
 

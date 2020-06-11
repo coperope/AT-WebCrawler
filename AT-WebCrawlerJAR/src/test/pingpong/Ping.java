@@ -1,4 +1,4 @@
-package test;
+package test.pingpong;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -47,7 +47,7 @@ public class Ping extends BaseAgent {
 			msm().post(msgToPong);
 		} else if (msg.performative == Performative.INFORM) {
 			ACLMessage msgFromPong = msg;
-			wsMessageCreator.log("Ping-Pong: " + msgFromPong.content);
+			wsMessageCreator.log("Ping-Pong counter: " + msgFromPong.content);
 		}
 	}
 }
