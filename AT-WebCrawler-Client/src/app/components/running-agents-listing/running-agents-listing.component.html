@@ -18,45 +18,80 @@
   </div>
 
 
-  <div class="agents-list">
-    <ul class="list-group ">
-      <li class="list-group-item justify-content-between align-items-center list-group-item-secondary">
-        <div class="agent-div" style="float: left; ">
-          <p><b>Name</b></p>
-        </div>
-        <div class="agent-div" style="float: left;">
-          <p><b>Type</b></p>
-        </div>
-        <div class="agent-div" style="float: left;">
-          <p><b>Host</b></p>
-        </div>
-        <div class="agent-div" style="float: right;">
-          <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message"
-            style="margin-left: 16px; margin-top: 3px; width: 20px; height: 20px;"
-            (click)="sendMessageModal(message, null)">
-          <p style="float: right;"><b>Actions</b></p>
-        </div>
-      </li>
-      <li class="list-group-item justify-content-between align-items-center" *ngFor="let agent of fiteredRunningAgents">
-        <div class="agent-div" style="float: left;">
-          <p>{{agent.name}}</p>
-        </div>
-        <div class="agent-div" style="float: left;">
-          <p>{{agent.type.name}}</p>
-        </div>
-        <div class="agent-div" style="float: left;">
-          <p>{{agent.host.address}}</p>
-        </div>
-        <div class="agent-div-action" style="float: right;">
-          <img src="assets/stop.png" alt="" data-toggle="tooltip" title="Stop agent" (click)="stopAgent(stop, agent)">
-        </div>
-        <div class="agent-div-action" style="float: right;">
-          <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message"
-            (click)="sendMessageModal(message, agent)">
-        </div>
-      </li>
-    </ul>
-  </div>
+  <div class="text-left">
+    <table mat-table [dataSource]="fiteredRunningAgents" #mytable class="my-table mat-elevation-z8" width="100%">
+  
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="list-group-item-secondary"> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef class="list-group-item-secondary"> Type </th>
+        <td mat-cell *matCellDef="let element"> {{element.type.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="host">
+        <th mat-header-cell *matHeaderCellDef class="list-group-item-secondary"> Host </th>
+        <td mat-cell *matCellDef="let element"> {{element.host.address}} </td>
+      </ng-container>
+
+  
+  
+      <!-- Action Column -->
+      <ng-container matColumnDef="action" >
+        <th mat-header-cell *matHeaderCellDef class="text-right list-group-item-secondary">
+          <div class="agent-div" style="float: right;">
+            <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message"
+              style="margin-left: 16px; margin-top: 3px; width: 20px; height: 20px;"
+              (click)="sendMessageModal(message, null)">
+            <p style="float: right;"><b>Actions</b></p>
+          </div>
+          </th>
+        <td mat-cell *matCellDef="let element" class="action-link text-right">
+          <div class="agent-div-action" style="float: right;">
+            <img src="assets/stop.png" alt="" data-toggle="tooltip" title="Stop agent" (click)="stopAgent(stop, element)">
+          </div>
+          <div class="agent-div-action" style="float: right;">
+            <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message"
+              (click)="sendMessageModal(message, element)">
+          </div>
+
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </div>
