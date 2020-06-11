@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CookieService } from 'ngx-cookie-service';
 import { NgSelectModule } from '@ng-select/ng-select';
-
+import { MatTableModule } from '@angular/material/table';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -20,6 +20,7 @@ import { RunningAgentsListingComponent } from './components/running-agents-listi
     RunningAgentsListingComponent,
   ],
   imports: [
+    MatTableModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule,

@@ -5,6 +5,7 @@ import { AID } from 'src/app/model/AID.model';
 import { MainServiceService } from 'src/app/services/main-service.service';
 import { Performative } from 'src/app/model/Performative.model';
 import { ACLMessage } from 'src/app/model/ACLMessage.model';
+import { MatTable } from '@angular/material/table';
 
 
 @Component({
@@ -16,7 +17,7 @@ export class RunningAgentsListingComponent implements OnInit {
   @Input() performatives: Array<Performative>;
   @Input() runningAgents: Array<AID>;
   fiteredRunningAgents: Array<AID>;
-
+  displayedColumns: string[] = ['name', 'type', 'host', 'action'];
   @ViewChild('receivers') receivers: Array<AID>;
 
   filterName: string;
@@ -29,6 +30,8 @@ export class RunningAgentsListingComponent implements OnInit {
   selectedReceivers: Array<string>;
   selectedPerformative: string;
   content: string;
+  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+
 
   constructor(private modalService: NgbModal,
               private mainService: MainServiceService) {
