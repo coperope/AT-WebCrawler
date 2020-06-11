@@ -64,7 +64,7 @@ public class AgentManagerBean implements AgentManager {
 	}
 
 	@Override
-	public AID startServerAgent(AgentType type, String name) {
+	public AID startServerAgent(AgentType type, String name) throws IOException {
 		AgentCenter host = new AgentCenter("localhost", "test");
 
 		AID aid = new AID(name, type, host);
@@ -78,8 +78,8 @@ public class AgentManagerBean implements AgentManager {
 			agent = ObjectFactory.lookup(path, Agent.class, null);
 		}
 
-		agents.put(aid, agent);
 		agent.init(aid);
+		agents.put(aid, agent);
 		
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());

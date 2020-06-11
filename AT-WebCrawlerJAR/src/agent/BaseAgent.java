@@ -1,6 +1,11 @@
 package agent;
 
+import java.io.IOException;
+
 import message.ACLMessage;
+import message.MessageManager;
+import node.AgentCenter;
+import util.ObjectFactory;
 
 public abstract class BaseAgent implements Agent{
 
@@ -8,15 +13,15 @@ public abstract class BaseAgent implements Agent{
 
 	protected AID id;
 	
+	private MessageManager msm;
+	
 	@Override
-	public void init(AID id) {
+	public void init(AID id) throws IOException {
 		this.id = id;
 	}
 
 	@Override
-	public void handleMessage(ACLMessage msg) {
-		// TODO Auto-generated method stub
-		
+	public void handleMessage(ACLMessage msg) throws IOException {
 	}
 
 	@Override
@@ -26,8 +31,16 @@ public abstract class BaseAgent implements Agent{
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	protected MessageManager msm() {
+		if (msm == null)
+			msm = ObjectFactory.getMessageManager(null);
+		return msm;
+	}
+
+	public MessageManager getMsm() {
+		return msm;
 	}
 
 }

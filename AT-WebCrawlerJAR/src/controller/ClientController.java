@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class ClientController implements ClientControllerRemote{
 	@PUT
 	@Path("/agents/running/{type}/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public AID startAgentOfType(@PathParam("name") String name, @PathParam("type") String type ){
+	public AID startAgentOfType(@PathParam("name") String name, @PathParam("type") String type ) throws IOException{
 		List<AgentType> agentTypes = agm.getAvailableAgentClasses();
 		for (AgentType agentType : agentTypes) {
 			if(agentType.getName().equals(type)) {

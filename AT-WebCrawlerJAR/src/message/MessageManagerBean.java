@@ -122,9 +122,4 @@ public class MessageManagerBean implements MessageManager {
 		jmsMsg.setIntProperty("AIDIndex", index);
 		jmsMsg.setStringProperty("_HQ_DUPL_ID", UUID.randomUUID().toString());
 	}
-
-
-	
-
-	
 }
