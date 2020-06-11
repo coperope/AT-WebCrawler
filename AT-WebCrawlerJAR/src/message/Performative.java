@@ -1,6 +1,8 @@
 package message;
 
-public enum Performative {
+import java.io.Serializable;
+
+public enum Performative implements Serializable{
 	ACCEPT_PROPOSAL,
 	AGREE, 
 	CANCEL, 
@@ -24,8 +26,8 @@ public enum Performative {
 	REQUEST_WHENEVER, 
 	SUBSCRIBE,
 	RESUME;
-	
+
 	public String getPerformative() {
-		return this.name();
-	}
+        return this.name();
+    }
 }

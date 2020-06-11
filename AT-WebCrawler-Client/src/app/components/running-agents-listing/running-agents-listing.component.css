@@ -1,0 +1,29 @@
+.agents-list {
+	overflow: auto;
+	max-height: 400px;
+}
+
+.agent-div {
+	min-width: 120px;
+	max-width: 120px;
+	display: inline-block;
+	vertical-align: middle;
+  float: none;
+  padding-top: 10px;
+}
+
+.agent-div-action {
+	min-width: 50px;
+	max-width: 50px;
+	display: inline-block;
+	vertical-align: middle;
+  float: none;
+  padding-top: 10px;
+}
+
+img {
+	height: 18px;
+	width: 18px;
+  cursor: pointer;
+  float: right;
+}

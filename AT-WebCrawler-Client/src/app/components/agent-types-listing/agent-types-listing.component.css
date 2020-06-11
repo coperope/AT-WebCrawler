@@ -1,0 +1,16 @@
+.types-list {
+  overflow: auto;
+  max-height: 400px;
+}
+
+.type-div {
+  display: inline-block; 
+  vertical-align: middle; 
+  float:none;
+}
+
+img {
+  height: 18px;
+  width: 18px;
+  cursor: pointer;
+}

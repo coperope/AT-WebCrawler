@@ -6,6 +6,8 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import agent.AID;
 import agent.AgentType;
 import ws.WSEndpoint;
@@ -47,5 +49,16 @@ public class WSMessageCreator {
 			ws.sendMessage(json);
 		}
 		
+	}
+
+	public void sendLog(String log) throws IOException {
+		WSMessage wsMessage = new WSMessage(WSType.Log);
+		wsMessage.setLog(log);
+		String json = JSON.mapper.writeValueAsString(wsMessage);
+		if(ws == null) {
+			System.out.println("WS JE NULL");
+		}else {
+			ws.sendMessage(json);
+		}
 	}
 }
