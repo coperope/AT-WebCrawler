@@ -1,0 +1,160 @@
+<div class="shadow-sm  m-1 bg-white rounded">
+
+  <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+    <h5>Running agents</h5>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 form-group form-inline d-flex justify-content-center m-2 p-2">
+      <input class="form-control ml-2" type="text" name="filter" placeholder="Search by name" [(ngModel)]="filterName"
+        (ngModelChange)="onSearchName()" />
+    </div>
+    <div class="col-sm-4 form-group form-inline d-flex justify-content-center m-2 p-2">
+      <input class="form-control ml-2" type="text" name="filter" placeholder="Search by type" [(ngModel)]="filterType"
+        (ngModelChange)="onSearchType()" />
+    </div>
+    <div class="agent-div-action" style="float: right;">
+
+    </div>
+  </div>
+
+
+  <div class="text-left">
+    <table mat-table [dataSource]="fiteredRunningAgents" #mytable class="my-table mat-elevation-z8" width="100%">
+  
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="list-group-item-secondary"> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef class="list-group-item-secondary"> Type </th>
+        <td mat-cell *matCellDef="let element"> {{element.type.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="host">
+        <th mat-header-cell *matHeaderCellDef class="list-group-item-secondary"> Host </th>
+        <td mat-cell *matCellDef="let element"> {{element.host.address}} </td>
+      </ng-container>
+
+  
+  
+      <!-- Action Column -->
+      <ng-container matColumnDef="action" >
+        <th mat-header-cell *matHeaderCellDef class="text-right list-group-item-secondary">
+          <div class="agent-div" style="float: right;">
+            <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message"
+              style="margin-left: 16px; margin-top: 3px; width: 20px; height: 20px;"
+              (click)="sendMessageModal(message, null)">
+            <p style="float: right;"><b>Actions</b></p>
+          </div>
+          </th>
+        <td mat-cell *matCellDef="let element" class="action-link text-right">
+          <div class="agent-div-action" style="float: right;">
+            <img src="assets/stop.png" alt="" data-toggle="tooltip" title="Stop agent" (click)="stopAgent(stop, element)">
+          </div>
+          <div class="agent-div-action" style="float: right;">
+            <img src="assets/message.png" alt="" data-toggle="tooltip" title="Send message"
+              (click)="sendMessageModal(message, element)">
+          </div>
+
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<!-- STOP AGENT MODAL -->
+<ng-template #stop let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Stop agent</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+      <p style="font-size: large;">Stop agent <b>{{stopAgentAID?.name}}</b>?</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="stopAgentConfirmed()">Stop</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cancel</button>
+  </div>
+</ng-template>
+
+<!-- SEND MESSAGE MODAL -->
+<ng-template #message let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Send message</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+        <p>Sender:</p>
+        <ng-select style="width: 100%;" name="selectedSender" [(ngModel)]="selectedSender" bindLabel="name"
+          bindValue="str">
+          <ng-option *ngFor="let agent of runningAgents" [value]="agent">{{agent.name}}</ng-option>
+        </ng-select>
+      </div>
+      <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+        <p>Receivers:</p>
+        <ng-select style="width: 100%;" name="selectedReceivers" [multiple]="true" [(ngModel)]="selectedReceivers"
+          bindLabel="name" bindValue="str">
+          <ng-option *ngFor="let agent of runningAgents" [value]="agent">{{agent.name}}</ng-option>
+        </ng-select>
+      </div>
+      <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+        <p>Performative:</p>
+        <ng-select style="width: 100%;" name="selectedPerformative" [(ngModel)]="selectedPerformative">
+          <ng-option *ngFor="let performative of performatives" [value]="performative">{{performative}}</ng-option>
+        </ng-select>
+      </div>
+      <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+        <p>Content:</p>
+
+        <textarea class="form-control" rows="4" style="width: 100%;" name="content" [(ngModel)]="content"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="sendMessage()">Send</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cancel</button>
+  </div>
+</ng-template>

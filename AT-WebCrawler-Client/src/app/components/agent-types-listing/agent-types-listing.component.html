@@ -1,0 +1,47 @@
+<div class="shadow-sm  m-1 bg-white rounded">
+
+  <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+    <h5>Agent Types</h5>
+  </div>
+  <div class="form-group form-inline d-flex justify-content-center m-2 p-2">
+    <input class="form-control ml-2" type="text" name="filter" placeholder="Search by name" [(ngModel)]="filter"
+      (ngModelChange)="onSearch()" />
+  </div>
+
+  <div class="types-list">
+    <ul class="list-group">
+      <li class="list-group-item justify-content-between align-items-center" *ngFor="let type of filteredTypes">
+        <div class="type-div" tyle="float: left;" style="padding-top: 10px;">
+          <p>{{type.name}}</p>
+        </div>
+        <div class="type-div" style="float: right; padding-top: 10px;">
+          <img src="assets/add.png" alt="" data-toggle="tooltip" title="Create agent of this type" (click)="openModal(content, type)">
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Start new agent</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+      <input class="form-control ml-2" type="text" name="agentName" placeholder="Name" [(ngModel)]="newAgent.name"/>
+    </div>
+    <div class="form-group form-inline d-flex justify-content-center mt-2 pt-2">
+      <p style="font-size: large;">Type: {{newAgent.type?.name}}</p>
+    </div>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="createAgent()">Start agent</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
