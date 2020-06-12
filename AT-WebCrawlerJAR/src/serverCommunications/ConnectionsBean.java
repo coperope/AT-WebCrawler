@@ -161,8 +161,8 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     }
     
     @Override
-    public List<Agent> getRunningAgents(){
-    	List<Agent> runningAgents = new ArrayList<Agent>();
+    public List<Object> getRunningAgents(){
+    	List<Object> runningAgents = new ArrayList<Object>();
 		for (Agent agent2 : agm.getAgents().values()) {
 			runningAgents.add(agent2);
 		}

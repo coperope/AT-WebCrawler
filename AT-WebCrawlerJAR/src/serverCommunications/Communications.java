@@ -21,6 +21,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import agent.AID;
 import agent.Agent;
 import agent.AgentManager;
+import agent.AgentType;
 import node.AgentCenter;
 
 @Singleton
@@ -49,9 +50,25 @@ public class Communications {
 			this.connections = rest.newConnection(this.getAgentCenter());
 			this.connections.add(this.master);
 			
-			List<Agent> runningAgents = rest.getRunningAgents();
+			List<Object> runningAgents = rest.getRunningAgents();
+			List<AgentType> types = agm.getAvailableAgentClasses();
+			List<Agent> realRunningAgents = new ArrayList<Agent>();
+			try {
+				for (AgentType agentType : types) {
+					Class<?> someClass = Class.forName(agentType.getName());
+					for (Object agent : runningAgents) {
+						if(Class.forName(agentType.getName()).isInstance(agent)) {
+							
+							realRunningAgents.add((Agent)Class.forName(agentType.getName()).cast(agent));
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			HashMap<AID, Agent> tempAgents = new HashMap<AID, Agent>();
-	    	for (Agent agent : runningAgents) {
+	    	for (Agent agent : realRunningAgents) {
 				tempAgents.put(agent.getAid(), agent);
 			}
 	    	agm.setAgents(tempAgents);

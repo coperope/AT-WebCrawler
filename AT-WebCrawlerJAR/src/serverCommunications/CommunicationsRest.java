@@ -60,7 +60,7 @@ public interface CommunicationsRest {
     @GET
     @Path("/agents/running")
     @Produces(MediaType.APPLICATION_JSON) 
-    public List<Agent> getRunningAgents();
+    public List<Object> getRunningAgents();
     
 	@DELETE
 	@Path("/node/{alias}")
