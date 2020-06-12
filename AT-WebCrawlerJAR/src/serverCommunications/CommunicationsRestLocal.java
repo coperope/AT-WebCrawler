@@ -1,7 +1,8 @@
 package serverCommunications;
 
-import java.util.HashMap;
+import java.util.List;
 
+import agent.Agent;
 import node.AgentCenter;
 
 
@@ -10,5 +11,5 @@ public interface CommunicationsRestLocal {
 
 	public AgentCenter getHost();
 	
-
+	public void sendRunningAgentsToEveryone(List<Agent> runningAgents);
 }

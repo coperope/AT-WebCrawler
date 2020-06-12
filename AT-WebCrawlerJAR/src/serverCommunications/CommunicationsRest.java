@@ -55,12 +55,12 @@ public interface CommunicationsRest {
     @Path("/agents/running")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON) 
-    public boolean sendRunningAgents(HashMap<AID, Agent> agents);
+    public boolean sendRunningAgents(List<Agent> agents);
 	
     @GET
     @Path("/agents/running")
     @Produces(MediaType.APPLICATION_JSON) 
-    public HashMap<AID, Agent> getRunningAgents();
+    public List<Agent> getRunningAgents();
     
 	@DELETE
 	@Path("/node/{alias}")
@@ -73,6 +73,4 @@ public interface CommunicationsRest {
 	@Produces(MediaType.APPLICATION_JSON) 
 	public boolean getNode();
 	
-	
-	public void sendRunningAgentsToEveryone(HashMap<AID,Agent> runningAgents);
 }

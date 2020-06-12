@@ -134,8 +134,12 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     }
     
     @Override
-    public boolean sendRunningAgents(HashMap<AID, Agent> agents){
-    	agm.setAgents(agents);
+    public boolean sendRunningAgents(List<Agent> agents){
+    	HashMap<AID, Agent> tempAgents = new HashMap<AID, Agent>();
+    	for (Agent agent : agents) {
+			tempAgents.put(agent.getAid(), agent);
+		}
+    	agm.setAgents(tempAgents);
     	try {
 			ws.sendActiveAgents(agm.getRunningAgents());
 		} catch (IOException e) {
@@ -146,7 +150,7 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     }
     
     @Override
-    public void sendRunningAgentsToEveryone(HashMap<AID,Agent> runningAgents) {
+    public void sendRunningAgentsToEveryone(List<Agent> runningAgents) {
     	ResteasyClient client = new ResteasyClientBuilder()
                 .build();
     	for (AgentCenter center : communications.getConnections()) {
@@ -157,7 +161,11 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     }
     
     @Override
-    public HashMap<AID, Agent> getRunningAgents(){
-    	return agm.getAgents();
+    public List<Agent> getRunningAgents(){
+    	List<Agent> runningAgents = new ArrayList<Agent>();
+		for (Agent agent2 : agm.getAgents().values()) {
+			runningAgents.add(agent2);
+		}
+    	return runningAgents;
     }
 }

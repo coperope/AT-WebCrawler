@@ -1,6 +1,7 @@
 package serverCommunications;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +18,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import agent.AID;
+import agent.Agent;
 import agent.AgentManager;
 import node.AgentCenter;
 
@@ -45,7 +48,13 @@ public class Communications {
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			this.connections = rest.newConnection(this.getAgentCenter());
 			this.connections.add(this.master);
-			agm.setAgents(rest.getRunningAgents());
+			
+			List<Agent> runningAgents = rest.getRunningAgents();
+			HashMap<AID, Agent> tempAgents = new HashMap<AID, Agent>();
+	    	for (Agent agent : runningAgents) {
+				tempAgents.put(agent.getAid(), agent);
+			}
+	    	agm.setAgents(tempAgents);
 			
 			System.out.println("Connections: ");
 			for (AgentCenter agentCenter : connections) {
