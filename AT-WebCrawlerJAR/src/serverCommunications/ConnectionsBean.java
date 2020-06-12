@@ -3,6 +3,7 @@ package serverCommunications;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -16,6 +17,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import agent.AID;
+import agent.Agent;
 import agent.AgentManager;
 import agent.AgentType;
 import node.AgentCenter;
@@ -55,15 +58,17 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     		ResteasyWebTarget rtarget = client.target("http://" + connections.getAddress() + "/AT-WebCrawlerWAR/rest/server");
     		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
     		rest.oneNode(connection);
-    		
 		}
     	ResteasyWebTarget rtarget = client.target("http://" + connection + "/AT-WebCrawlerWAR/rest/server");
     	//rest = rtarget.proxy(comunicationsRest.class);
 		//boolean test = rest.allUsers(this.usrmsg.getUsersLoggedin());
 		//System.out.println(connection);
-    	
+    	List<AgentCenter> retVal = new ArrayList<AgentCenter>();
+    	for (AgentCenter agentCenter : communications.getConnections()) {
+			retVal.add(agentCenter);
+		}
     	communications.getConnections().add(connection);
-    	return communications.getConnections();
+    	return retVal;
     }
     
     @Override
@@ -95,8 +100,8 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
 	}
 	
     @Override
-    public AgentCenter getNode() {
-    	return communications.getAgentCenter();
+    public boolean getNode() {
+    	return true;
     }
     
     @Override
@@ -109,6 +114,8 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     public List<AgentType> sendAgentTypes(List<AgentType> agentTypes){
     	return new ArrayList<AgentType>();
     }
+    
+    
 	/*
 	 * @Override public void tellEveryone(HashMap<String,User> usersLoggedIn) {
 	 * ResteasyClient client = new ResteasyClientBuilder() .build(); for (String
@@ -120,6 +127,28 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     
     @Override
     public AgentCenter getHost() {
-    	return getNode();
+    	return communications.getAgentCenter();
+    }
+    
+    @Override
+    public boolean sendRunningAgents(HashMap<AID, Agent> agents){
+    	agm.setAgents(agents);
+    	return true;
+    }
+    
+    @Override
+    public void sendRunningAgentsToEveryone(HashMap<AID,Agent> runningAgents) {
+    	ResteasyClient client = new ResteasyClientBuilder()
+                .build();
+    	for (AgentCenter center : communications.getConnections()) {
+    		ResteasyWebTarget rtarget = client.target("http://" + center + "/WAR2020/rest/server");
+    		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+    		rest.sendRunningAgents(runningAgents);
+		}
+    }
+    
+    @Override
+    public HashMap<AID, Agent> getRunningAgents(){
+    	return agm.getAgents();
     }
 }

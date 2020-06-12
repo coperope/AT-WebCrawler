@@ -1,6 +1,8 @@
 package serverCommunications;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -11,6 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import agent.AID;
+import agent.Agent;
 import agent.AgentType;
 import node.AgentCenter;
 
@@ -33,7 +37,6 @@ public interface CommunicationsRest {
 	public boolean allNodes(List<AgentCenter> connection);
 	
 	
-	
     @GET
     @Path("/agents/classes")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -45,22 +48,31 @@ public interface CommunicationsRest {
     @Path("/agents/classes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON) 
-    public List<AgentType> sendAgentTypes();
-		/*
-		 * @GET
-		 * 
-		 * @Path("/users/loggedIn")
-		 * 
-		 * @Produces(MediaType.APPLICATION_JSON) public HashMap<String,User>
-		 * getAllUsers();
-		 */
-	 
+    public List<AgentType> sendAgentTypes(List<AgentType> agentTypes);
+
+    
+    @POST
+    @Path("/agents/running")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) 
+    public boolean sendRunningAgents(HashMap<AID, Agent> agents);
 	
+    @GET
+    @Path("/agents/running")
+    @Produces(MediaType.APPLICATION_JSON) 
+    public HashMap<AID, Agent> getRunningAgents();
+    
 	@DELETE
 	@Path("/node/{alias}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) 
 	public boolean deleteNode(@PathParam("alias") String alias);
 	
 	@GET
 	@Path("/node")
-	public AgentCenter getNode();
+	@Produces(MediaType.APPLICATION_JSON) 
+	public boolean getNode();
+	
+	
+	public void sendRunningAgentsToEveryone(HashMap<AID,Agent> runningAgents);
 }

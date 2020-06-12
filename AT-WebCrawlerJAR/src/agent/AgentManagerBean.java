@@ -11,10 +11,17 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 import javax.naming.NamingException;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import node.AgentCenter;
 import serverCommunications.Communications;
+import serverCommunications.CommunicationsRest;
+import serverCommunications.ConnectionsBean;
 import util.AgentTypesJndiFinder;
 import util.ObjectFactory;
 import util.WSMessageCreator;
@@ -33,6 +40,9 @@ public class AgentManagerBean implements AgentManager {
 	
 	@EJB
 	private Communications communications;
+	
+	@Inject
+	ConnectionsBean communicate;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -89,8 +99,10 @@ public class AgentManagerBean implements AgentManager {
 		agent.init(aid);
 		agents.put(aid, agent);
 		
+		
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
+			communicate.sendRunningAgentsToEveryone(agents);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -135,4 +147,13 @@ public class AgentManagerBean implements AgentManager {
 	public Agent getAgent(AID aid) {
 		return agents.get(aid);
 	}
+
+	public HashMap<AID, Agent> getAgents() {
+		return agents;
+	}
+
+	public void setAgents(HashMap<AID, Agent> agents) {
+		this.agents = agents;
+	}
+	
 }

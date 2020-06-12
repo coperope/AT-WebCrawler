@@ -1,13 +1,12 @@
 package serverCommunications;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Schedule;
@@ -18,56 +17,69 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import agent.AgentManager;
 import node.AgentCenter;
-
 
 @Singleton
 @Startup
 @LocalBean
+@AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class Communications {
 	
 	private AgentCenter master = new AgentCenter("master","");
-	private AgentCenter agentCenter = new AgentCenter("localHost1","");
+	private AgentCenter agentCenter = new AgentCenter("localHost1","2facc61c9ec4.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
+	
+	@EJB
+	private AgentManager agm;
     /**
      * Default constructor. 
      */
-    @PostConstruct
+	@PostConstruct
 	private void init() {
-    	System.out.println("Here");
-    	if (master != null && !master.getAddress().equals("")) {
-    		
+		System.out.println("Here");
+		if (master != null && !master.getAddress().equals("")) {
 			ResteasyClient client = new ResteasyClientBuilder().build();
-			ResteasyWebTarget rtarget = client.target("http://" + master + "/AT-WebCrawlerWAR/rest/server");
+			ResteasyWebTarget rtarget = client
+					.target("http://" + master.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			this.connections = rest.newConnection(this.getAgentCenter());
-			this.connections.remove(this.getAgentCenter());
 			this.connections.add(this.master);
+			agm.setAgents(rest.getRunningAgents());
 			
+			System.out.println("Connections: ");
+			for (AgentCenter agentCenter : connections) {
+				System.out.println(agentCenter.getAlias());
+			}
 			System.out.println("ZAVRSIO");
 		}
-    }
+	}
    
 
-    
-    @Schedule(hour = "*", minute = "*",second = "*/45", info = "every ten minutes")
-    public void heartBeat() {
-    	System.out.println("Timer");
-    	ResteasyClient client = new ResteasyClientBuilder()
-                .build();
-    	for (AgentCenter center : this.connections) {
-    		ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
-    		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
-    		AgentCenter node = rest.getNode();
-    		if(node == null) {
-    			AgentCenter node1 = rest.getNode();
-    			if (node1 == null) {
-    				removeNodeTellEveryone(center);
-    			}
-    		}
-    		
-		}
-    }
+	  @Schedule(hour = "*", minute = "*",second = "*/45", info = "every ten minutes")
+	  public void heartBeat() { 
+		  System.out.println("Timer");
+		  System.out.println("Checking health for: ");
+		  ResteasyClient client = new ResteasyClientBuilder().build();
+		  for (AgentCenter center : this.connections) {
+			  ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server"); 
+			  CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+			  
+			  try {
+				 rest.getNode();
+			  }catch (Exception e) {
+				  try {
+					  rest.getNode();
+				  }catch (Exception e2) {
+					  System.out.println("Node is null");
+					  removeNodeTellEveryone(center);
+				  }
+			  }
+			  System.out.println(center.getAlias());
+			  System.out.println(center.getAddress());
+		  } 
+	 }
+	 
 	public void removeNodeTellEveryone(AgentCenter connection) {
 		ResteasyClient client = new ResteasyClientBuilder()
                 .build();
@@ -86,7 +98,7 @@ public class Communications {
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		
 		for (AgentCenter connection : this.connections) {
-			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/connection");
+			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			rest.deleteNode(agentCenter.getAlias());
 		}
