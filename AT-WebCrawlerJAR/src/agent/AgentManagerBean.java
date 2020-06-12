@@ -11,9 +11,17 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+
 import node.AgentCenter;
+import serverCommunications.Communications;
+import serverCommunications.CommunicationsRest;
+import serverCommunications.ConnectionsBean;
 import util.AgentTypesJndiFinder;
 import util.ObjectFactory;
 import util.WSMessageCreator;
@@ -30,6 +38,12 @@ public class AgentManagerBean implements AgentManager {
 	@EJB
 	private WSMessageCreator wsMessageCreator;
 	
+	@EJB
+	private Communications communications;
+	
+	@Inject
+	ConnectionsBean communicate;
+	
 	@PostConstruct
 	public void postConstruct() {
 		agents = new HashMap<AID, Agent>();
@@ -37,6 +51,9 @@ public class AgentManagerBean implements AgentManager {
 	
 	@Override
 	public List<AgentType> getAvailableAgentClasses() {
+		System.out.println("-------------------------    jboss.node.name    -------------------------");
+		System.out.println(System.getProperty("jboss.node.name"));
+		System.out.println("-------------------------------------------------------------------------");
 		try {
 			return agentTypesFinder.parse();
 		} catch (NamingException ex) {
@@ -65,8 +82,9 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public AID startServerAgent(AgentType type, String name) throws IOException {
-		AgentCenter host = new AgentCenter("localhost", "test");
-
+		
+		AgentCenter host = communications.getAgentCenter();
+		
 		AID aid = new AID(name, type, host);
 		Agent agent = null;
 
@@ -81,8 +99,13 @@ public class AgentManagerBean implements AgentManager {
 		agent.init(aid);
 		agents.put(aid, agent);
 		
+		List<Agent> runningAgents = new ArrayList<Agent>();
+		for (Agent agent2 : agents.values()) {
+			runningAgents.add(agent2);
+		}
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
+			communicate.sendRunningAgentsToEveryone(runningAgents);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -127,4 +150,13 @@ public class AgentManagerBean implements AgentManager {
 	public Agent getAgent(AID aid) {
 		return agents.get(aid);
 	}
+
+	public HashMap<AID, Agent> getAgents() {
+		return agents;
+	}
+
+	public void setAgents(HashMap<AID, Agent> agents) {
+		this.agents = agents;
+	}
+	
 }
