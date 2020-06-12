@@ -18,11 +18,15 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import agent.AID;
 import agent.Agent;
 import agent.AgentManager;
 import agent.AgentType;
 import node.AgentCenter;
+import test.Ping;
 import util.JSON;
 
 @Singleton
@@ -31,8 +35,8 @@ import util.JSON;
 @AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class Communications {
 	
-	private AgentCenter master = new AgentCenter("master","");
-	private AgentCenter agentCenter = new AgentCenter("localHost1","2facc61c9ec4.ngrok.io");
+	private AgentCenter master = new AgentCenter("master","2facc61c9ec4.ngrok.io");
+	private AgentCenter agentCenter = new AgentCenter("localHost2","54a02d17a42f.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
 	
 	@EJB
@@ -58,9 +62,15 @@ public class Communications {
 				for (AgentType agentType : types) {
 					for (Object agent : runningAgents) {
 						try {
-							Agent a = (Agent) JSON.mapper.readValue(agent.toString(), Class.forName("test." + agentType.getName()));
+							System.out.println(agent.toString());
+							ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+							String json = ow.writeValueAsString(agent);
+							Agent a = (Agent) JSON.mapper.readValue(json, Class.forName("test." + agentType.getName()));
 							realRunningAgents.add(a);
 						}catch (Exception e) {
+							System.out.println("E JBG STARI");
+							System.out.println(Ping.class.getName());
+							e.printStackTrace();
 							continue;
 						}
 						/*
