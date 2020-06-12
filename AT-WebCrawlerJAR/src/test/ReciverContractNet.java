@@ -31,6 +31,8 @@ public class ReciverContractNet extends BaseAgent {
 	@Override
 	public void handleMessage(ACLMessage msg) throws IOException {
 		wsMessageCreator.log("ReciverContractNet agent handle message");
+		wsMessageCreator.log(msg.performative + ": " + msg.content);
+
 		switch (msg.performative) {
 		case CALL_FOR_PROPOSAL:
 			if (Math.random() > 0.4) {

@@ -99,7 +99,7 @@ export class RunningAgentsListingComponent implements OnInit {
     this.message.performative = this.selectedPerformative;
     this.message.content = this.content;
 
-    if (!this.message.sender || !this.message.sender || !this.message.sender || !this.message.sender){
+    if (!this.message.receivers || !this.message.performative){
       return;
     }
 

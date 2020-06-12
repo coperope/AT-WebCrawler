@@ -13,6 +13,7 @@ import agent.BaseAgent;
 import message.ACLMessage;
 import message.Performative;
 import node.AgentCenter;
+import serverCommunications.Communications;
 import util.ObjectFactory;
 import util.WSMessageCreator;
 
@@ -24,6 +25,9 @@ public class Ping extends BaseAgent {
 
 	@EJB
 	WSMessageCreator wsMessageCreator;
+	
+	@EJB
+	Communications communications;
 
 	@Override
 	public void init(AID id) throws IOException {
@@ -35,7 +39,7 @@ public class Ping extends BaseAgent {
 	public void handleMessage(ACLMessage msg) throws IOException {
 		wsMessageCreator.log("Ping agent handle message");
 		if (msg.performative == Performative.REQUEST) {
-			AgentCenter host = new AgentCenter("localhost", "test");
+			AgentCenter host = communications.getAgentCenter();
 			AID pongAid = new AID(msg.content, new AgentType(ObjectFactory.PROJECT_MODULE, Pong.class.getSimpleName()),
 					host);
 			ACLMessage msgToPong = new ACLMessage(Performative.REQUEST);

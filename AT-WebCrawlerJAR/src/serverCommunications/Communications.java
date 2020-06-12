@@ -35,8 +35,8 @@ import util.JSON;
 @AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class Communications {
 	
-	private AgentCenter master = new AgentCenter("master","2facc61c9ec4.ngrok.io");
-	private AgentCenter agentCenter = new AgentCenter("localHost2","54a02d17a42f.ngrok.io");
+	private AgentCenter master = new AgentCenter("master","");
+	private AgentCenter agentCenter = new AgentCenter("localHost2","79e00c5c6112.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
 	
 	@EJB

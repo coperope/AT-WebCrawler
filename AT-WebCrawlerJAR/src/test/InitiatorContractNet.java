@@ -13,6 +13,7 @@ import agent.BaseAgent;
 import message.ACLMessage;
 import message.Performative;
 import node.AgentCenter;
+import serverCommunications.Communications;
 import util.ObjectFactory;
 import util.WSMessageCreator;
 
@@ -24,6 +25,9 @@ public class InitiatorContractNet extends BaseAgent {
 
 	@EJB
 	WSMessageCreator wsMessageCreator;
+	
+	@EJB
+	Communications communications;
 
 	@Override
 	public void init(AID id) throws IOException {
@@ -34,12 +38,14 @@ public class InitiatorContractNet extends BaseAgent {
 	@Override
 	public void handleMessage(ACLMessage msg) throws IOException {
 		wsMessageCreator.log("InitiatorContractNet agent handle message");
+		wsMessageCreator.log(msg.performative + ": " + msg.content);
+
 		switch (msg.performative) {
 		case REQUEST:
 
 			wsMessageCreator.log("Initiator received request to start the job");
 
-			AgentCenter host = new AgentCenter("localhost", "test");
+			AgentCenter host = communications.getAgentCenter();
 			AID reciver = new AID(msg.content,
 					new AgentType(ObjectFactory.PROJECT_MODULE, ReciverContractNet.class.getSimpleName()), host);
 			ACLMessage qmsg = new ACLMessage(Performative.CALL_FOR_PROPOSAL);
