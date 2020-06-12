@@ -14,6 +14,7 @@ import javax.ejb.Singleton;
 import javax.naming.NamingException;
 
 import node.AgentCenter;
+import serverCommunications.Communications;
 import util.AgentTypesJndiFinder;
 import util.ObjectFactory;
 import util.WSMessageCreator;
@@ -30,6 +31,9 @@ public class AgentManagerBean implements AgentManager {
 	@EJB
 	private WSMessageCreator wsMessageCreator;
 	
+	@EJB
+	private Communications communications;
+	
 	@PostConstruct
 	public void postConstruct() {
 		agents = new HashMap<AID, Agent>();
@@ -37,6 +41,9 @@ public class AgentManagerBean implements AgentManager {
 	
 	@Override
 	public List<AgentType> getAvailableAgentClasses() {
+		System.out.println("-------------------------    jboss.node.name    -------------------------");
+		System.out.println(System.getProperty("jboss.node.name"));
+		System.out.println("-------------------------------------------------------------------------");
 		try {
 			return agentTypesFinder.parse();
 		} catch (NamingException ex) {
@@ -65,8 +72,9 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public AID startServerAgent(AgentType type, String name) throws IOException {
-		AgentCenter host = new AgentCenter("localhost", "test");
-
+		
+		AgentCenter host = communications.getAgentCenter();
+		
 		AID aid = new AID(name, type, host);
 		Agent agent = null;
 
