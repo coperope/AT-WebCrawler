@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import message.ACLMessage;
-import test.pingpong.Ping;
+import test.Ping;
 
 
 @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")

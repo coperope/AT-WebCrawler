@@ -56,9 +56,9 @@ public class Communications {
 			try {
 				for (AgentType agentType : types) {
 					for (Object agent : runningAgents) {
-						if(Class.forName("test.pingpong." + agentType.getName()).isInstance(agent)) {
+						if(Class.forName("test." + agentType.getName()).isInstance(agent)) {
 							
-							realRunningAgents.add((Agent)Class.forName("test.pingpong." + agentType.getName()).cast(agent));
+							realRunningAgents.add((Agent)Class.forName("test." + agentType.getName()).cast(agent));
 						}
 					}
 				}
