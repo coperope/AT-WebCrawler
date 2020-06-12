@@ -55,11 +55,10 @@ public class Communications {
 			List<Agent> realRunningAgents = new ArrayList<Agent>();
 			try {
 				for (AgentType agentType : types) {
-					Class<?> someClass = Class.forName(agentType.getName());
 					for (Object agent : runningAgents) {
-						if(Class.forName(agentType.getName()).isInstance(agent)) {
+						if(Class.forName("test.pingpong." + agentType.getName()).isInstance(agent)) {
 							
-							realRunningAgents.add((Agent)Class.forName(agentType.getName()).cast(agent));
+							realRunningAgents.add((Agent)Class.forName("test.pingpong." + agentType.getName()).cast(agent));
 						}
 					}
 				}
