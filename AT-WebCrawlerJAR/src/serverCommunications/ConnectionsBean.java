@@ -2,9 +2,7 @@ package serverCommunications;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -152,7 +150,7 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     	ResteasyClient client = new ResteasyClientBuilder()
                 .build();
     	for (AgentCenter center : communications.getConnections()) {
-    		ResteasyWebTarget rtarget = client.target("http://" + center + "/WAR2020/rest/server");
+    		ResteasyWebTarget rtarget = client.target("http://" + center + "/AT-WebCrawlerWAR/rest/server");
     		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
     		rest.sendRunningAgents(runningAgents);
 		}
