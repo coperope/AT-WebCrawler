@@ -23,6 +23,7 @@ import agent.Agent;
 import agent.AgentManager;
 import agent.AgentType;
 import node.AgentCenter;
+import util.JSON;
 
 @Singleton
 @Startup
@@ -56,10 +57,18 @@ public class Communications {
 			try {
 				for (AgentType agentType : types) {
 					for (Object agent : runningAgents) {
-						if(Class.forName("test." + agentType.getName()).isInstance(agent)) {
-							
-							realRunningAgents.add((Agent)Class.forName("test." + agentType.getName()).cast(agent));
+						try {
+							Agent a = (Agent) JSON.mapper.readValue(agent.toString(), Class.forName("test." + agentType.getName()));
+							realRunningAgents.add(a);
+						}catch (Exception e) {
+							continue;
 						}
+						/*
+						 * if(Class.forName("test." + agentType.getName()).isInstance(agent)) {
+						 * 
+						 * realRunningAgents.add((Agent)Class.forName("test." +
+						 * agentType.getName()).cast(agent)); }
+						 */
 					}
 				}
 			} catch (Exception e) {
