@@ -1,5 +1,6 @@
 package serverCommunications;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import agent.Agent;
 import agent.AgentManager;
 import agent.AgentType;
 import node.AgentCenter;
+import util.WSMessageCreator;
 
 
 /**
@@ -35,6 +37,9 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
 
 	@EJB
 	Communications communications;
+	
+	@EJB
+	WSMessageCreator ws;
 	
 	@EJB
 	AgentManager agm;
@@ -133,6 +138,12 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     @Override
     public boolean sendRunningAgents(HashMap<AID, Agent> agents){
     	agm.setAgents(agents);
+    	try {
+			ws.sendActiveAgents(agm.getRunningAgents());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	return true;
     }
     
