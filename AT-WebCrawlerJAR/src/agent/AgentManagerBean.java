@@ -92,7 +92,7 @@ public class AgentManagerBean implements AgentManager {
 			String path = getAgentLookup(aid.getType(), true);
 			agent = ObjectFactory.lookup(path, Agent.class, null);
 		} catch (IllegalStateException ex) {
-			String path = getAgentLookup(aid.getType(), true);
+			String path = getAgentLookup(aid.getType(), false);
 			agent = ObjectFactory.lookup(path, Agent.class, null);
 		}
 
