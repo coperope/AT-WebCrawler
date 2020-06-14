@@ -94,8 +94,21 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     
     @Override
 	public boolean deleteNode(@PathParam("alias") String alias) {
+    	
     	for (AgentCenter agentCenter : this.communications.getConnections()) {
 			if (agentCenter.getAlias().equals(alias)) {
+				HashMap<AID, Agent> newRunningAgents = new HashMap<AID, Agent>();
+		    	for (AID agent : agm.getAgents().keySet()) {
+		    		if (!agent.getHost().getAddress().equals(agentCenter.getAddress())) {
+		    			newRunningAgents.put(agent, agm.getAgents().get(agent));
+					}
+				}
+		    	agm.setAgents(newRunningAgents);
+		    	try {
+					ws.sendActiveAgents(agm.getRunningAgents());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				this.communications.getConnections().remove(agentCenter);
 				return true;
 			}

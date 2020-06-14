@@ -1,5 +1,6 @@
 package serverCommunications;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import agent.AgentManager;
 import agent.AgentType;
 import node.AgentCenter;
 import util.JSON;
+import util.WSMessageCreator;
 
 @Singleton
 @Startup
@@ -34,11 +36,14 @@ import util.JSON;
 public class Communications {
 
 	private AgentCenter master = new AgentCenter("master", "fc23b60989e5.ngrok.io");
-	private AgentCenter agentCenter = new AgentCenter("localHost2", "0146e1867d00.ngrok.io");
+	private AgentCenter agentCenter = new AgentCenter("localHost2", "d5cef4b86583.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
 
 	@EJB
 	private AgentManager agm;
+	
+	@EJB
+	private WSMessageCreator wsMessageCreator;
 
 	/**
 	 * Default constructor.
@@ -117,6 +122,11 @@ public class Communications {
 			rest.deleteNode(connection.getAlias());
 		}
 		agm.setAgents(newRunningAgents);
+		try {
+			wsMessageCreator.sendActiveAgents(agm.getRunningAgents());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.connections.remove(connection);
 	}
 
@@ -124,20 +134,12 @@ public class Communications {
 	private void destroy() {
 		System.out.println("USAO U destroy");
 		ResteasyClient client = new ResteasyClientBuilder().build();
-		Set<AID> runningAgents = new HashSet<AID>();
-		for (AID aid : agm.getAgents().keySet()) {
-			System.out.println("USAO U FOR");
-			if (agm.getAgent(aid) == null) {
-				System.out.println("USAO GDE TREBA");
-				runningAgents.add(aid);
-			}
-		}
+
 		for (AgentCenter connection : this.connections) {
 			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			rest.deleteNode(agentCenter.getAlias());
 			System.out.println("NODE SEND ACTION TO DELETE");
-			rest.sendRunningAgents(runningAgents);
 		}
 
 		System.out.println("Node is destroyed");
