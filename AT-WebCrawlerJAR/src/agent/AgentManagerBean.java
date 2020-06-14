@@ -119,20 +119,12 @@ public class AgentManagerBean implements AgentManager {
 	@Override
 	public void stopAgent(AID aid) {
 		Agent agent = agents.get(aid);
-		if (agent != null) {
-			agent.stop();
-			agents.remove(aid);
-			try {
-				wsMessageCreator.sendActiveAgents(getRunningAgents());
-				communicate.sendRunningAgentsToEveryone(agents.keySet());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}else {
-			ResteasyClient client = new ResteasyClientBuilder().build();
-			ResteasyWebTarget rtarget = client
-					.target("http://" + aid.getHost().getAddress() + "/AT-WebCrawlerWAR/rest/client/agents/running");
-			rtarget.request(MediaType.APPLICATION_JSON).method("DELETE", Entity.entity(aid, MediaType.APPLICATION_JSON));
+		agents.remove(aid);
+		try {
+			wsMessageCreator.sendActiveAgents(getRunningAgents());
+			communicate.sendRunningAgentsToEveryone(agents.keySet());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
