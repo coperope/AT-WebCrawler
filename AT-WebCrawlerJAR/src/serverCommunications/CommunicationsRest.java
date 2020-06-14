@@ -3,6 +3,7 @@ package serverCommunications;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -55,12 +56,12 @@ public interface CommunicationsRest {
     @Path("/agents/running")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON) 
-    public boolean sendRunningAgents(List<Agent> agents);
+    public boolean sendRunningAgents(Set<AID> agents);
 	
     @GET
     @Path("/agents/running")
     @Produces(MediaType.APPLICATION_JSON) 
-    public List<Object> getRunningAgents();
+    public Set<AID> getRunningAgents();
     
 	@DELETE
 	@Path("/node/{alias}")

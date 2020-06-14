@@ -84,4 +84,12 @@ public class AID implements Serializable {
 		other.str = other.name + "@" + other.host.alias;
 		return str.equals(other.str);
 	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "AID[name="+ this.name +" ,type="+this.type+" ,host="+ this.host + " ,str="+str+"]";
+	}
+	
+	
 }

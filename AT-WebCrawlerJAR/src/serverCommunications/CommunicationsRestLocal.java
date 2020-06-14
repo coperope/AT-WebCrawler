@@ -1,7 +1,9 @@
 package serverCommunications;
 
 import java.util.List;
+import java.util.Set;
 
+import agent.AID;
 import agent.Agent;
 import node.AgentCenter;
 
@@ -11,5 +13,5 @@ public interface CommunicationsRestLocal {
 
 	public AgentCenter getHost();
 	
-	public void sendRunningAgentsToEveryone(List<Agent> runningAgents);
+	public void sendRunningAgentsToEveryone(Set<AID> runningAgents);
 }

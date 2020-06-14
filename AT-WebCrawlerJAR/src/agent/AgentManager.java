@@ -17,4 +17,8 @@ public interface AgentManager {
 	public HashMap<AID, Agent> getAgents();
 
 	public void setAgents(HashMap<AID, Agent> agents);
+	
+	public void putAgent(AID aid, Agent agent);
+	
+	public Agent getAgent(AID aid);
 }

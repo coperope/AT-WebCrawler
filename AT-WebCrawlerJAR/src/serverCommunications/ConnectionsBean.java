@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -93,8 +94,21 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     
     @Override
 	public boolean deleteNode(@PathParam("alias") String alias) {
+    	
     	for (AgentCenter agentCenter : this.communications.getConnections()) {
 			if (agentCenter.getAlias().equals(alias)) {
+				HashMap<AID, Agent> newRunningAgents = new HashMap<AID, Agent>();
+		    	for (AID agent : agm.getAgents().keySet()) {
+		    		if (!agent.getHost().getAddress().equals(agentCenter.getAddress())) {
+		    			newRunningAgents.put(agent, agm.getAgents().get(agent));
+					}
+				}
+		    	agm.setAgents(newRunningAgents);
+		    	try {
+					ws.sendActiveAgents(agm.getRunningAgents());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				this.communications.getConnections().remove(agentCenter);
 				return true;
 			}
@@ -134,12 +148,13 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     }
     
     @Override
-    public boolean sendRunningAgents(List<Agent> agents){
-    	HashMap<AID, Agent> tempAgents = new HashMap<AID, Agent>();
-    	for (Agent agent : agents) {
-			tempAgents.put(agent.getAid(), agent);
+    public boolean sendRunningAgents(Set<AID> agents){
+    	System.out.println("***************** Send Running Agent *****************");
+    	HashMap<AID, Agent> newRunningAgents = new HashMap<AID, Agent>();
+    	for (AID agent : agents) {
+    		newRunningAgents.put(agent, agm.getAgents().get(agent));
 		}
-    	agm.setAgents(tempAgents);
+    	agm.setAgents(newRunningAgents);
     	try {
 			ws.sendActiveAgents(agm.getRunningAgents());
 		} catch (IOException e) {
@@ -150,22 +165,22 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     }
     
     @Override
-    public void sendRunningAgentsToEveryone(List<Agent> runningAgents) {
+    public void sendRunningAgentsToEveryone(Set<AID> runningAgents) {
     	ResteasyClient client = new ResteasyClientBuilder()
                 .build();
     	for (AgentCenter center : communications.getConnections()) {
-    		ResteasyWebTarget rtarget = client.target("http://" + center + "/AT-WebCrawlerWAR/rest/server");
+    		ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
     		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
     		rest.sendRunningAgents(runningAgents);
 		}
     }
     
     @Override
-    public List<Object> getRunningAgents(){
-    	List<Object> runningAgents = new ArrayList<Object>();
-		for (Agent agent2 : agm.getAgents().values()) {
-			runningAgents.add(agent2);
-		}
-    	return runningAgents;
+    public Set<AID> getRunningAgents(){
+		/*
+		 * List<AID> runningAgents = new ArrayList<AID>(); for (AID agent2 :
+		 * agm.getAgents().keySet()) { runningAgents.add(agent2); }
+		 */
+    	return agm.getAgents().keySet();
     }
 }
