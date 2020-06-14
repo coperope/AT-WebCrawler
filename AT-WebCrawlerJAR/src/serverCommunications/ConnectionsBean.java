@@ -137,11 +137,11 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     @Override
     public boolean sendRunningAgents(Set<AID> agents){
     	System.out.println("***************** Send Running Agent *****************");
+    	HashMap<AID, Agent> newRunningAgents = new HashMap<AID, Agent>();
     	for (AID agent : agents) {
-    		if(!agm.getAgents().containsKey(agent)){
-    			agm.putAgent(agent, null);
-    		}
+    		newRunningAgents.put(agent, agm.getAgents().get(agent));
 		}
+    	agm.setAgents(newRunningAgents);
     	try {
 			ws.sendActiveAgents(agm.getRunningAgents());
 		} catch (IOException e) {

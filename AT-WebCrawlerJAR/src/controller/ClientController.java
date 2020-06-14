@@ -97,9 +97,7 @@ public class ClientController implements ClientControllerRemote {
 	public void sendMessage(ACLMessage message) {
 		System.out.println("Odje saljem poruku");
 		// MessageManagerBean messsageMenager;
-		for (AID aid : message.receivers) {
-			msm.post(message);
-		}
+		msm.post(message);
 	}
 
 	@GET

@@ -100,11 +100,11 @@ public class MessageManagerBean implements MessageManager {
 		// TODO : Check if the agent/subscriber exists
 		// http://hornetq.sourceforge.net/docs/hornetq-2.0.0.BETA5/user-manual/en/html/management.html#d0e5742
 		for (int i = 0; i < msg.receivers.size(); i++) {
-			AgentCenter host = (msg.receivers.get(i).getHost().getAddress()
-					.equals(communications.getAgentCenter().getAddress())) ? null : msg.receivers.get(i).getHost();
 			if (msg.receivers.get(i) == null) {
 				throw new IllegalArgumentException("AID cannot be null.");
 			} else {
+				AgentCenter host = (msg.receivers.get(i).getHost().getAddress()
+						.equals(communications.getAgentCenter().getAddress())) ? null : msg.receivers.get(i).getHost();
 				if (host == null) {
 					postToReceiver(msg, i, delayMillisec);
 				} else {

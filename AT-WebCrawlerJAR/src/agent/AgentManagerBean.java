@@ -13,6 +13,8 @@ import javax.ejb.Remote;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.naming.NamingException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -122,9 +124,15 @@ public class AgentManagerBean implements AgentManager {
 			agents.remove(aid);
 			try {
 				wsMessageCreator.sendActiveAgents(getRunningAgents());
+				communicate.sendRunningAgentsToEveryone(agents.keySet());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}else {
+			ResteasyClient client = new ResteasyClientBuilder().build();
+			ResteasyWebTarget rtarget = client
+					.target("http://" + aid.getHost().getAddress() + "/AT-WebCrawlerWAR/rest/client/agents/running");
+			rtarget.request(MediaType.APPLICATION_JSON).method("DELETE", Entity.entity(aid, MediaType.APPLICATION_JSON));
 		}
 	}
 
