@@ -29,10 +29,10 @@ public class Ping extends BaseAgent {
 
 	@EJB
 	Communications communications;
-	
+
 	@EJB
 	AgentManagerBean agm;
-	
+
 	@Override
 	public void init(AID id) throws IOException {
 		this.id = id;
@@ -60,9 +60,9 @@ public class Ping extends BaseAgent {
 			} else {
 				System.out.println("Could not find pong agent.");
 			}
-			
 
-			
+
+
 		} else if (msg.performative == Performative.INFORM) {
 			ACLMessage msgFromPong = msg;
 			wsMessageCreator.log("Ping-Pong counter: " + msgFromPong.content);
