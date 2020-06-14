@@ -116,8 +116,7 @@ public class Communications {
 		ResteasyClient client = new ResteasyClientBuilder().build();
 
 		for (AgentCenter connection : this.connections) {
-			ResteasyWebTarget rtarget = client
-					.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
+			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			rest.deleteNode(agentCenter.getAlias());
 		}
