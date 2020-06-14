@@ -51,9 +51,6 @@ public class AgentManagerBean implements AgentManager {
 	
 	@Override
 	public List<AgentType> getAvailableAgentClasses() {
-		System.out.println("-------------------------    jboss.node.name    -------------------------");
-		System.out.println(System.getProperty("jboss.node.name"));
-		System.out.println("-------------------------------------------------------------------------");
 		try {
 			return agentTypesFinder.parse();
 		} catch (NamingException ex) {
@@ -67,14 +64,20 @@ public class AgentManagerBean implements AgentManager {
 		if (set.size() > 0) {
 			AID aid = set.iterator().next();
 			try {
+				AgentCenter host = (aid.getHost().getAddress().equals(communications.getAgentCenter().getAddress()))? null:aid.getHost();
+				System.out.println("*****HOST********");
+				System.out.println(host);
 				try {
-					ObjectFactory.lookup(getAgentLookup(aid.getType(), true), Agent.class, null);
+					ObjectFactory.lookup(getAgentLookup(aid.getType(), true), Agent.class, host);
+					System.out.println("MALI TRY");
 				} catch (Exception ex) {
-					ObjectFactory.lookup(getAgentLookup(aid.getType(), false), Agent.class, null);
+					ObjectFactory.lookup(getAgentLookup(aid.getType(), false), Agent.class, host);
+					System.out.println("MALI CATCH");
 				}
 			} catch (Exception ex) {
 				set.remove(aid);
 				agents.remove(aid);
+				System.out.println("VELIKI CATCH");
 			}
 		}
 		return new ArrayList<AID>(set);
@@ -153,6 +156,10 @@ public class AgentManagerBean implements AgentManager {
 
 	public void setAgents(HashMap<AID, Agent> agents) {
 		this.agents = agents;
+	}
+	
+	public void putAgent(AID aid, Agent agent) {
+		agents.put(aid, agent);
 	}
 	
 }

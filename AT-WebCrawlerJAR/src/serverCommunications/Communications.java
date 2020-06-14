@@ -31,16 +31,17 @@ import util.JSON;
 @LocalBean
 @AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class Communications {
-	
-	private AgentCenter master = new AgentCenter("master","");
-	private AgentCenter agentCenter = new AgentCenter("localHost1","2facc61c9ec4.ngrok.io");
+
+	private AgentCenter master = new AgentCenter("master", "796f91280b32.ngrok.io");
+	private AgentCenter agentCenter = new AgentCenter("localHost2", "873c8a941181.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
-	
+
 	@EJB
 	private AgentManager agm;
-    /**
-     * Default constructor. 
-     */
+
+	/**
+	 * Default constructor.
+	 */
 	@PostConstruct
 	private void init() {
 		System.out.println("Here");
@@ -51,15 +52,18 @@ public class Communications {
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			this.connections = rest.newConnection(this.getAgentCenter());
 			this.connections.add(this.master);
-			
+
 			Set<AID> runningAgents = rest.getRunningAgents();
 
-	    	for (AID agent : runningAgents) {
-	    		if(!agm.getAgents().containsKey(agent)){
-	    			agm.getAgents().put(agent, null);
-	    		}
+			for (AID agent : runningAgents) {
+				agm.putAgent(agent, null);
+				System.out.println(agent);
 			}
 			
+			for (AID aid : agm.getAgents().keySet()) {
+				System.out.println(aid);
+			}
+
 			System.out.println("Connections: ");
 			for (AgentCenter agentCenter : connections) {
 				System.out.println(agentCenter.getAlias());
@@ -67,55 +71,57 @@ public class Communications {
 			System.out.println("ZAVRSIO");
 		}
 	}
-   
 
-	  @Schedule(hour = "*", minute = "*",second = "*/45", info = "every ten minutes")
-	  public void heartBeat() { 
-		  System.out.println("Timer");
-		  System.out.println("Checking health for: ");
-		  ResteasyClient client = new ResteasyClientBuilder().build();
-		  for (AgentCenter center : this.connections) {
-			  ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server"); 
-			  CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
-			  
-			  try {
-				 rest.getNode();
-			  }catch (Exception e) {
-				  try {
-					  rest.getNode();
-				  }catch (Exception e2) {
-					  System.out.println("Node is null");
-					  removeNodeTellEveryone(center);
-				  }
-			  }
-			  System.out.println(center.getAlias());
-			  System.out.println(center.getAddress());
-		  } 
-	 }
-	 
-	public void removeNodeTellEveryone(AgentCenter connection) {
-		ResteasyClient client = new ResteasyClientBuilder()
-                .build();
-    	for (AgentCenter center : this.connections) {
-    		if(center.getAddress().equals(connection.getAddress())) {
-    			continue;
-    		}
-    		ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
-    		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
-    		rest.deleteNode(connection.getAlias());
-    	}
-    	this.connections.remove(connection);
+	@Schedule(hour = "*", minute = "*", second = "*/45", info = "every ten minutes")
+	public void heartBeat() {
+		System.out.println("Timer");
+		System.out.println("Checking health for: ");
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		for (AgentCenter center : this.connections) {
+			ResteasyWebTarget rtarget = client
+					.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
+			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+
+			try {
+				rest.getNode();
+			} catch (Exception e) {
+				try {
+					rest.getNode();
+				} catch (Exception e2) {
+					System.out.println("Node is null");
+					removeNodeTellEveryone(center);
+				}
+			}
+			System.out.println(center.getAlias());
+			System.out.println(center.getAddress());
+		}
 	}
+
+	public void removeNodeTellEveryone(AgentCenter connection) {
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		for (AgentCenter center : this.connections) {
+			if (center.getAddress().equals(connection.getAddress())) {
+				continue;
+			}
+			ResteasyWebTarget rtarget = client
+					.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
+			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+			rest.deleteNode(connection.getAlias());
+		}
+		this.connections.remove(connection);
+	}
+
 	@PreDestroy
 	private void destroy() {
 		ResteasyClient client = new ResteasyClientBuilder().build();
-		
+
 		for (AgentCenter connection : this.connections) {
-			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
+			ResteasyWebTarget rtarget = client
+					.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
 			rest.deleteNode(agentCenter.getAlias());
 		}
-		
+
 		System.out.println("Node is destroyed");
 	}
 
@@ -142,5 +148,5 @@ public class Communications {
 	public void setConnections(List<AgentCenter> connections) {
 		this.connections = connections;
 	}
-	
+
 }

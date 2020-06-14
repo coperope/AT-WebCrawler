@@ -136,9 +136,10 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     
     @Override
     public boolean sendRunningAgents(Set<AID> agents){
+    	System.out.println("***************** Send Running Agent *****************");
     	for (AID agent : agents) {
     		if(!agm.getAgents().containsKey(agent)){
-    			agm.getAgents().put(agent, null);
+    			agm.putAgent(agent, null);
     		}
 		}
     	try {
@@ -155,7 +156,7 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     	ResteasyClient client = new ResteasyClientBuilder()
                 .build();
     	for (AgentCenter center : communications.getConnections()) {
-    		ResteasyWebTarget rtarget = client.target("http://" + center + "/AT-WebCrawlerWAR/rest/server");
+    		ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
     		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
     		rest.sendRunningAgents(runningAgents);
 		}
