@@ -49,9 +49,10 @@ public class Browser extends BaseAgent {
 			String propertiesJsonString = JSON.mapper.writeValueAsString(properties);
 			System.out.println(propertiesJsonString);
 			
-			//ACLMessage reply = msg.makeReply(Performative.AGREE);
-			//reply.content = propertiesJson;
-			//reply.sender = id;
+			ACLMessage reply = msg.makeReply(Performative.AGREE);
+			reply.content = propertiesJsonString;
+			reply.sender = id;
+			msm().post(reply);
 			break;
 		default:
 			wsMessageCreator.log("Browser: invalid performative");

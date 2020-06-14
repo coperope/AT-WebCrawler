@@ -149,17 +149,4 @@ public class Collector extends BaseAgent {
 			writer.write(JSON.mapper.writeValueAsString(properties));
 		}
 	}
-
-	private ArrayList<String> greenAcresRegions() {
-		ArrayList<String> regions = new ArrayList<String>();
-		regions.add("https://www.green-acres.fr/property-for-sale/paris");
-		regions.add("https://www.green-acres.fr/property-for-sale/hauts-de-seine");
-		regions.add("https://www.green-acres.fr/property-for-sale/val-de-marne");
-		regions.add("https://www.green-acres.fr/property-for-sale/seine-saint-denis");
-		regions.add("https://www.green-acres.fr/property-for-sale/seine-et-marne");
-		regions.add("https://www.green-acres.fr/property-for-sale/val-d-oise");
-		regions.add("https://www.green-acres.fr/property-for-sale/yvelines");
-		regions.add("https://www.green-acres.fr/property-for-sale/essonne");
-		return regions;
-	}
 }
