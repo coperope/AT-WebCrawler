@@ -98,19 +98,7 @@ public class ClientController implements ClientControllerRemote {
 		System.out.println("Odje saljem poruku");
 		// MessageManagerBean messsageMenager;
 		for (AID aid : message.receivers) {
-			AgentCenter host = (aid.getHost().getAddress().equals(communications.getAgentCenter().getAddress())) ? null
-					: aid.getHost();
-			if (host == null) {
-				MessageManager manager = ObjectFactory.getMessageManager(host);
-				manager.post(message);
-			} else {
-				ResteasyClient client = new ResteasyClientBuilder().build();
-				ResteasyWebTarget rtarget = client
-						.target("http://" + host.getAddress() + "/AT-WebCrawlerWAR/rest/server/messages");
-				rtarget.request(MediaType.APPLICATION_JSON)
-						.post(Entity.entity(message, MediaType.APPLICATION_JSON));
-			}
-
+			msm.post(message);
 		}
 	}
 

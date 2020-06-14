@@ -39,8 +39,16 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import agent.AID;
+import node.AgentCenter;
+import serverCommunications.Communications;
 
 @Stateless
 @Remote(MessageManager.class)
@@ -49,6 +57,9 @@ public class MessageManagerBean implements MessageManager {
 
 	@EJB
 	private JMSFactory factory;
+
+	@EJB
+	Communications communications;
 
 	private Session session;
 	private MessageProducer defaultProducer;
@@ -89,11 +100,20 @@ public class MessageManagerBean implements MessageManager {
 		// TODO : Check if the agent/subscriber exists
 		// http://hornetq.sourceforge.net/docs/hornetq-2.0.0.BETA5/user-manual/en/html/management.html#d0e5742
 		for (int i = 0; i < msg.receivers.size(); i++) {
+			AgentCenter host = (msg.receivers.get(i).getHost().getAddress()
+					.equals(communications.getAgentCenter().getAddress())) ? null : msg.receivers.get(i).getHost();
 			if (msg.receivers.get(i) == null) {
 				throw new IllegalArgumentException("AID cannot be null.");
+			} else {
+				if (host == null) {
+					postToReceiver(msg, i, delayMillisec);
+				} else {
+					ResteasyClient client = new ResteasyClientBuilder().build();
+					ResteasyWebTarget rtarget = client
+							.target("http://" + host.getAddress() + "/AT-WebCrawlerWAR/rest/client/messages");
+					rtarget.request(MediaType.APPLICATION_JSON).post(Entity.entity(msg, MediaType.APPLICATION_JSON));
+				}
 			}
-			postToReceiver(msg, i, delayMillisec);
-			
 		}
 	}
 
