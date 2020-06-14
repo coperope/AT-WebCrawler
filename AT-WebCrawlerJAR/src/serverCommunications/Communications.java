@@ -102,7 +102,7 @@ public class Communications {
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		Set<AID> runningAgents = new HashSet<AID>();
 		for (AID aid : agm.getAgents().keySet()) {
-			if (agm.getAgents().get(aid) == null) {
+			if (agm.getAgent(aid) == null) {
 				runningAgents.add(aid);
 			}
 		}
@@ -121,10 +121,13 @@ public class Communications {
 
 	@PreDestroy
 	private void destroy() {
+		System.out.println("USAO U destroy");
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		Set<AID> runningAgents = new HashSet<AID>();
 		for (AID aid : agm.getAgents().keySet()) {
-			if (agm.getAgents().get(aid) == null) {
+			System.out.println("USAO U FOR");
+			if (agm.getAgent(aid) == null) {
+				System.out.println("USAO GDE TREBA");
 				runningAgents.add(aid);
 			}
 		}
