@@ -32,23 +32,23 @@ import util.WSMessageCreator;
 public class AgentManagerBean implements AgentManager {
 
 	private HashMap<AID, Agent> agents;
-	
+
 	@EJB
 	private AgentTypesJndiFinder agentTypesFinder;
 	@EJB
 	private WSMessageCreator wsMessageCreator;
-	
+
 	@EJB
 	private Communications communications;
-	
+
 	@Inject
 	ConnectionsBean communicate;
-	
+
 	@PostConstruct
 	public void postConstruct() {
 		agents = new HashMap<AID, Agent>();
 	}
-	
+
 	@Override
 	public List<AgentType> getAvailableAgentClasses() {
 		try {
@@ -64,7 +64,9 @@ public class AgentManagerBean implements AgentManager {
 		if (set.size() > 0) {
 			AID aid = set.iterator().next();
 			try {
-				AgentCenter host = (aid.getHost().getAddress().equals(communications.getAgentCenter().getAddress()))? null:aid.getHost();
+				AgentCenter host = (aid.getHost().getAddress().equals(communications.getAgentCenter().getAddress()))
+						? null
+						: aid.getHost();
 				System.out.println("*****HOST********");
 				System.out.println(host);
 				try {
@@ -85,9 +87,9 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public AID startServerAgent(AgentType type, String name) throws IOException {
-		
+
 		AgentCenter host = communications.getAgentCenter();
-		
+
 		AID aid = new AID(name, type, host);
 		Agent agent = null;
 
@@ -101,14 +103,14 @@ public class AgentManagerBean implements AgentManager {
 
 		agent.init(aid);
 		agents.put(aid, agent);
-		
+
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
 			communicate.sendRunningAgentsToEveryone(agents.keySet());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return aid;
 	}
 
@@ -125,29 +127,29 @@ public class AgentManagerBean implements AgentManager {
 			}
 		}
 	}
-	
+
 	private String getAgentLookup(AgentType agType, boolean stateful) {
 		if (agType.getModule().contains("/")) {
 			// in ear file
 			if (stateful)
-				return String.format("ejb:%s//%s!%s?stateful", agType.getModule(),
-						agType.getName(), Agent.class.getName());
-			else
-				return String.format("ejb:%s//%s!%s", agType.getModule(), agType.getName(),
+				return String.format("ejb:%s//%s!%s?stateful", agType.getModule(), agType.getName(),
 						Agent.class.getName());
+			else
+				return String.format("ejb:%s//%s!%s", agType.getModule(), agType.getName(), Agent.class.getName());
 		} else {
 			// in jar file
 			if (stateful)
-				return String.format("ejb:/%s//%s!%s?stateful", agType.getModule(),
-						agType.getName(), Agent.class.getName());
-			else
-				return String.format("ejb:/%s//%s!%s", agType.getModule(), agType.getName(),
+				return String.format("ejb:/%s//%s!%s?stateful", agType.getModule(), agType.getName(),
 						Agent.class.getName());
+			else
+				return String.format("ejb:/%s//%s!%s", agType.getModule(), agType.getName(), Agent.class.getName());
 		}
 	}
 
 	public Agent getAgent(AID aid) {
-		return agents.get(aid);
+		Agent a = null;
+		a = agents.get(aid);
+		return a;
 	}
 
 	public HashMap<AID, Agent> getAgents() {
@@ -157,9 +159,9 @@ public class AgentManagerBean implements AgentManager {
 	public void setAgents(HashMap<AID, Agent> agents) {
 		this.agents = agents;
 	}
-	
+
 	public void putAgent(AID aid, Agent agent) {
 		agents.put(aid, agent);
 	}
-	
+
 }

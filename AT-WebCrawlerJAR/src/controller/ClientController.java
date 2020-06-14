@@ -22,8 +22,12 @@ import agent.AID;
 import agent.AgentManager;
 import agent.AgentType;
 import message.ACLMessage;
+import message.MessageManager;
 import message.MessageManagerBean;
 import message.Performative;
+import node.AgentCenter;
+import serverCommunications.Communications;
+import util.ObjectFactory;
 
 @Stateless
 @Path("/client")
@@ -36,6 +40,9 @@ public class ClientController implements ClientControllerRemote{
 	
 	@EJB
 	MessageManagerBean msm;
+	
+	@EJB
+	private Communications communications;
 
 	@GET
 	@Path("/test")
@@ -83,7 +90,16 @@ public class ClientController implements ClientControllerRemote{
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendMessage(ACLMessage message) {
 		System.out.println("Odje saljem poruku");
-		msm.post(message);
+		//MessageManagerBean messsageMenager;
+		for (AID aid : message.receivers) {
+			AgentCenter host = (aid.getHost().getAddress().equals(communications.getAgentCenter().getAddress()))
+					? null
+					: aid.getHost();
+			MessageManager manager = ObjectFactory.getMessageManager(host);
+			manager.post(message);
+		}
+		
+		//msm.post(message);
 	}
 
 	@GET

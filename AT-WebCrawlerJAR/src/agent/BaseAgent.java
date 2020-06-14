@@ -2,11 +2,15 @@ package agent;
 
 import java.io.IOException;
 
+import javax.ejb.Remote;
+
 import message.ACLMessage;
 import message.MessageManager;
 import node.AgentCenter;
+import serverCommunications.CommunicationsRest;
 import util.ObjectFactory;
 
+@Remote(Agent.class)
 public abstract class BaseAgent implements Agent{
 
 	private static final long serialVersionUID = 1L;
