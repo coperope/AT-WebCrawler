@@ -34,7 +34,7 @@ import util.JSON;
 public class Communications {
 
 	private AgentCenter master = new AgentCenter("master", "fc23b60989e5.ngrok.io");
-	private AgentCenter agentCenter = new AgentCenter("localHost2", "873c8a941181.ngrok.io");
+	private AgentCenter agentCenter = new AgentCenter("localHost2", "0146e1867d00.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
 
 	@EJB
@@ -100,10 +100,10 @@ public class Communications {
 
 	public void removeNodeTellEveryone(AgentCenter connection) {
 		ResteasyClient client = new ResteasyClientBuilder().build();
-		Set<AID> runningAgents = new HashSet<AID>();
-		for (AID aid : agm.getAgents().keySet()) {
-			if (agm.getAgent(aid) == null) {
-				runningAgents.add(aid);
+		HashMap<AID, Agent> newRunningAgents = new HashMap<AID, Agent>();
+    	for (AID agent : agm.getAgents().keySet()) {
+    		if (!agent.getHost().getAddress().equals(connection.getAddress())) {
+    			newRunningAgents.put(agent, agm.getAgents().get(agent));
 			}
 		}
 		for (AgentCenter center : this.connections) {
@@ -113,9 +113,10 @@ public class Communications {
 			ResteasyWebTarget rtarget = client
 					.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
-			rest.sendRunningAgents(runningAgents);
+			rest.sendRunningAgents(newRunningAgents.keySet());
 			rest.deleteNode(connection.getAlias());
 		}
+		agm.setAgents(newRunningAgents);
 		this.connections.remove(connection);
 	}
 
@@ -134,8 +135,9 @@ public class Communications {
 		for (AgentCenter connection : this.connections) {
 			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
-			rest.sendRunningAgents(runningAgents);
 			rest.deleteNode(agentCenter.getAlias());
+			System.out.println("NODE SEND ACTION TO DELETE");
+			rest.sendRunningAgents(runningAgents);
 		}
 
 		System.out.println("Node is destroyed");
