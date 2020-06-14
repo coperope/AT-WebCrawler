@@ -3,6 +3,7 @@ package serverCommunications;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -51,35 +52,13 @@ public class Communications {
 			this.connections = rest.newConnection(this.getAgentCenter());
 			this.connections.add(this.master);
 			
-			List<Object> runningAgents = rest.getRunningAgents();
-			List<AgentType> types = agm.getAvailableAgentClasses();
-			List<Agent> realRunningAgents = new ArrayList<Agent>();
-			try {
-				for (AgentType agentType : types) {
-					for (Object agent : runningAgents) {
-						try {
-							Agent a = (Agent) JSON.mapper.readValue(agent.toString(), Class.forName("test." + agentType.getName()));
-							realRunningAgents.add(a);
-						}catch (Exception e) {
-							continue;
-						}
-						/*
-						 * if(Class.forName("test." + agentType.getName()).isInstance(agent)) {
-						 * 
-						 * realRunningAgents.add((Agent)Class.forName("test." +
-						 * agentType.getName()).cast(agent)); }
-						 */
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			Set<AID> runningAgents = rest.getRunningAgents();
+
+	    	for (AID agent : runningAgents) {
+	    		if(!agm.getAgents().containsKey(agent)){
+	    			agm.getAgents().put(agent, null);
+	    		}
 			}
-			
-			HashMap<AID, Agent> tempAgents = new HashMap<AID, Agent>();
-	    	for (Agent agent : realRunningAgents) {
-				tempAgents.put(agent.getAid(), agent);
-			}
-	    	agm.setAgents(tempAgents);
 			
 			System.out.println("Connections: ");
 			for (AgentCenter agentCenter : connections) {

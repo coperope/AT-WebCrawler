@@ -99,13 +99,9 @@ public class AgentManagerBean implements AgentManager {
 		agent.init(aid);
 		agents.put(aid, agent);
 		
-		List<Agent> runningAgents = new ArrayList<Agent>();
-		for (Agent agent2 : agents.values()) {
-			runningAgents.add(agent2);
-		}
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(runningAgents);
+			communicate.sendRunningAgentsToEveryone(agents.keySet());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
