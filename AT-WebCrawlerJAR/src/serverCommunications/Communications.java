@@ -2,6 +2,7 @@ package serverCommunications;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -99,6 +100,12 @@ public class Communications {
 
 	public void removeNodeTellEveryone(AgentCenter connection) {
 		ResteasyClient client = new ResteasyClientBuilder().build();
+		Set<AID> runningAgents = new HashSet<AID>();
+		for (AID aid : agm.getAgents().keySet()) {
+			if (agm.getAgents().get(aid) == null) {
+				runningAgents.add(aid);
+			}
+		}
 		for (AgentCenter center : this.connections) {
 			if (center.getAddress().equals(connection.getAddress())) {
 				continue;
@@ -106,6 +113,7 @@ public class Communications {
 			ResteasyWebTarget rtarget = client
 					.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+			rest.sendRunningAgents(runningAgents);
 			rest.deleteNode(connection.getAlias());
 		}
 		this.connections.remove(connection);
@@ -114,10 +122,16 @@ public class Communications {
 	@PreDestroy
 	private void destroy() {
 		ResteasyClient client = new ResteasyClientBuilder().build();
-
+		Set<AID> runningAgents = new HashSet<AID>();
+		for (AID aid : agm.getAgents().keySet()) {
+			if (agm.getAgents().get(aid) == null) {
+				runningAgents.add(aid);
+			}
+		}
 		for (AgentCenter connection : this.connections) {
 			ResteasyWebTarget rtarget = client.target("http://" + connection.getAddress() + "/AT-WebCrawlerWAR/rest/server");
 			CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+			rest.sendRunningAgents(runningAgents);
 			rest.deleteNode(agentCenter.getAlias());
 		}
 
