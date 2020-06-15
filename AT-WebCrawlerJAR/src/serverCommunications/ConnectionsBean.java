@@ -168,12 +168,24 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
 	@Override
 	public boolean sendNewAgent(AID aid) {
 		agm.putAgent(aid, null);
+		try {
+			ws.sendActiveAgents(agm.getRunningAgents());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return true;
 	}
 
 	@Override
 	public boolean deleteAgent(AID aid) {
 		agm.removeAgent(aid);
+		try {
+			ws.sendActiveAgents(agm.getRunningAgents());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return true;
 	}
 
