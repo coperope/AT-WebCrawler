@@ -50,7 +50,6 @@ public class MDBConsumer implements MessageListener {
 	private void deliverMessage(ACLMessage msg, AID aid) throws IOException {
 		Agent agent = agm.getAgent(aid);
 		if (agent != null) {
-			System.out.println("Odje agent obradjuje poruku");
 			agent.handleMessage(msg);
 		} else {
 			System.out.println("No such agent: {}");
