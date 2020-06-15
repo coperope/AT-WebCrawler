@@ -14,4 +14,8 @@ public interface CommunicationsRestLocal {
 	public AgentCenter getHost();
 	
 	public void sendRunningAgentsToEveryone(Set<AID> runningAgents);
+	
+	public void sendNewAgentToEveryone(AID aid);
+	
+	public void sendRemovedAgentToEveryone(AID aid);
 }

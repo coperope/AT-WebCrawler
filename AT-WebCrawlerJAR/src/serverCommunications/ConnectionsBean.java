@@ -42,13 +42,7 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
 	
 	@EJB
 	AgentManager agm;
-	/*
-	 * @EJB WSEndPoint ws;
-	 */
-	
-    /**
-     * Default constructor. 
-     */
+
     public ConnectionsBean() {
         // TODO Auto-generated constructor stub
     }
@@ -132,16 +126,6 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     	return new ArrayList<AgentType>();
     }
     
-    
-	/*
-	 * @Override public void tellEveryone(HashMap<String,User> usersLoggedIn) {
-	 * ResteasyClient client = new ResteasyClientBuilder() .build(); for (String
-	 * string : comunications.getConnection()) { ResteasyWebTarget rtarget =
-	 * client.target("http://" + string + "/WAR2020/rest/server"); comunicationsRest
-	 * rest = rtarget.proxy(comunicationsRest.class);
-	 * rest.allUsers(usrmsg.getUsersLoggedin()); } }
-	 */
-    
     @Override
     public AgentCenter getHost() {
     	return communications.getAgentCenter();
@@ -177,10 +161,41 @@ public class ConnectionsBean implements CommunicationsRest, CommunicationsRestLo
     
     @Override
     public Set<AID> getRunningAgents(){
-		/*
-		 * List<AID> runningAgents = new ArrayList<AID>(); for (AID agent2 :
-		 * agm.getAgents().keySet()) { runningAgents.add(agent2); }
-		 */
+
     	return agm.getAgents().keySet();
     }
+
+	@Override
+	public boolean sendNewAgent(AID aid) {
+		agm.putAgent(aid, null);
+		return true;
+	}
+
+	@Override
+	public boolean deleteAgent(AID aid) {
+		agm.removeAgent(aid);
+		return true;
+	}
+
+	@Override
+	public void sendNewAgentToEveryone(AID aid) {
+		ResteasyClient client = new ResteasyClientBuilder()
+                .build();
+    	for (AgentCenter center : communications.getConnections()) {
+    		ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
+    		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+    		rest.sendNewAgent(aid);
+		}
+	}
+
+	@Override
+	public void sendRemovedAgentToEveryone(AID aid) {
+		ResteasyClient client = new ResteasyClientBuilder()
+                .build();
+    	for (AgentCenter center : communications.getConnections()) {
+    		ResteasyWebTarget rtarget = client.target("http://" + center.getAddress() + "/AT-WebCrawlerWAR/rest/server");
+    		CommunicationsRest rest = rtarget.proxy(CommunicationsRest.class);
+    		rest.deleteAgent(aid);
+		}
+	}
 }

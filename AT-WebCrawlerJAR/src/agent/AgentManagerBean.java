@@ -106,7 +106,7 @@ public class AgentManagerBean implements AgentManager {
 
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(agents.keySet());
+			communicate.sendNewAgentToEveryone(aid);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -120,7 +120,7 @@ public class AgentManagerBean implements AgentManager {
 		agents.remove(aid);
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(agents.keySet());
+			communicate.sendRemovedAgentToEveryone(aid);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -161,8 +161,14 @@ public class AgentManagerBean implements AgentManager {
 		this.agents = agents;
 	}
 
+	@Override
 	public void putAgent(AID aid, Agent agent) {
 		agents.put(aid, agent);
+	}
+	
+	@Override
+	public void removeAgent(AID aid) {
+		agents.remove(aid);
 	}
 
 }

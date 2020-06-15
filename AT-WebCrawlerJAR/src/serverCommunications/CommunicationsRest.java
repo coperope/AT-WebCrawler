@@ -64,6 +64,18 @@ public interface CommunicationsRest {
     @Produces(MediaType.APPLICATION_JSON) 
     public Set<AID> getRunningAgents();
     
+    @POST
+    @Path("/agent/running/add")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) 
+    public boolean sendNewAgent(AID aid);
+    
+    @POST
+	@Path("/agent/running/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) 
+	public boolean deleteAgent(AID aid);
+    
 	@DELETE
 	@Path("/node/{alias}")
     @Consumes(MediaType.APPLICATION_JSON)
