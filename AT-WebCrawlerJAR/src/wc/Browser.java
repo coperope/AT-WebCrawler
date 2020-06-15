@@ -56,12 +56,14 @@ public class Browser extends BaseAgent {
 					reply.content = propertiesJsonString;
 					reply.sender = id;
 					reply.ontology = path;
+					agentManager.stopAgent(this.id);
 					msm().post(reply);
 				} else {
 					ACLMessage reply = msg.makeReply(Performative.DISCONFIRM);
 					reply.content = this.getAid().getHost().getAddress();
 					reply.sender = id;
 					reply.ontology = path;
+					agentManager.stopAgent(this.id);
 					msm().post(reply);
 				}
 			} catch (IOException e) {
@@ -69,9 +71,10 @@ public class Browser extends BaseAgent {
 				reply.content = this.getAid().getHost().getAddress();
 				reply.sender = id;
 				reply.ontology = path;
+				agentManager.stopAgent(this.id);
 				msm().post(reply);
 			}
-			agentManager.stopAgent(this.id);
+			
 			break;
 		default:
 			wsMessageCreator.log("Browser: invalid performative");

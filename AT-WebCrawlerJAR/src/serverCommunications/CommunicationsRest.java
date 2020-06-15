@@ -30,6 +30,7 @@ public interface CommunicationsRest {
 	@POST
 	@Path("/node")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public boolean oneNode(AgentCenter connection);
 	
 	@POST

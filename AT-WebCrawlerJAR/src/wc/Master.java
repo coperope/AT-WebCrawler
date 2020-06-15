@@ -52,6 +52,7 @@ public class Master extends BaseAgent {
 	HashMap<String, Integer> browserAgentsHostIndex;
 	// Needed for information when to stop the master agent
 	int createdCollectors;
+	int createdBrowsers;
 	// For clearer code purposes
 	private AgentType collectorType;
 	private AgentType browserType;
@@ -65,6 +66,8 @@ public class Master extends BaseAgent {
 		this.properties = new ArrayList<Property>();
 		this.siteAndRegionMap = initializeSiteAndRegionHashmap();
 		this.createdCollectors = 0;
+		this.createdBrowsers = 0;
+
 		this.browserAgentsHostIndex = new HashMap<String, Integer>();
 		List<AgentType> agentTypes = agentManager.getAvailableAgentClasses();
 		for (AgentType type : agentTypes) {
@@ -104,13 +107,14 @@ public class Master extends BaseAgent {
 			properties.addAll(JSON.mapper.readValue(propertiesJsonString, new TypeReference<List<Property>>(){}));
 			String path = msg.ontology;
 			regionAndCollectedMap.put(path, true);
+			--createdBrowsers;
 			
 			if (!regionAndCollectedMap.containsValue(false)) {
 				// Aggregate, sort... whatever... Send to user
 				System.out.println("MASTER: " + properties);
 				
 				// Stop master agent if no collectors are started, if they are, agent will be stopped in CASE: INFORM
-				if (createdCollectors == 0) {
+				if (createdCollectors == 0 && createdBrowsers == 0) {
 					agentManager.stopAgent(this.id);
 				}
 			}
@@ -124,7 +128,7 @@ public class Master extends BaseAgent {
 
 			String host = msg.content;
 			String pathToScrape = msg.ontology;
-			
+			--createdBrowsers;
 			// Run scraper
 			if (host.equals(communications.getAgentCenter().getAddress())) {
 				runCollectorLocally(pathToScrape);
@@ -171,7 +175,7 @@ public class Master extends BaseAgent {
 				// Stop master agent when all created collectors are done to avoid errors with no running master aid
 				agentManager.stopAgent(this.id);
 			}
-			
+			break;
 		default:
 			wsMessageCreator.log("Master: invalid performative");
 			break;
@@ -201,9 +205,9 @@ public class Master extends BaseAgent {
 		// Create agent on remote server
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget rtarget = client
-				.target("http://" + hostAddress + "/AT-WebCrawlerWAR/rest/client/agents/running/Collector/Collector-" + pathToScrape);
+				.target("http://" + hostAddress + "/AT-WebCrawlerWAR/rest/client/agents/running/Collector/Collector-" + pathToScrape.replace("/", "-"));
 		Response response = rtarget.request(MediaType.APPLICATION_JSON).put(Entity.entity(null, MediaType.APPLICATION_JSON));
-		AID aid = (AID) response.getEntity();
+		AID aid = response.readEntity(AID.class);
 		// Create message
 		ACLMessage qmsg = new ACLMessage(Performative.REQUEST);
 		qmsg.receivers.add(aid);
@@ -216,6 +220,7 @@ public class Master extends BaseAgent {
 	
 	private void startBrowserLocally(String pathToBrowse) throws IOException {
 		AID aid = agentManager.startServerAgent(this.browserType, "Browser-" + pathToBrowse);
+		createdBrowsers++;
 		ACLMessage qmsg = new ACLMessage(Performative.REQUEST);
 		qmsg.receivers.add(aid);
 		qmsg.content = pathToBrowse; // Content is path to search for data
@@ -233,10 +238,10 @@ public class Master extends BaseAgent {
 		
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget rtarget = client
-				.target("http://" + hostAddress + "/AT-WebCrawlerWAR/rest/client/agents/running/Browser/Browser-" + pathToBrowse);
+				.target("http://" + hostAddress + "/AT-WebCrawlerWAR/rest/client/agents/running/Browser/Browser-" + pathToBrowse.replace("/", "-"));
 		Response response = rtarget.request(MediaType.APPLICATION_JSON).put(Entity.entity(null, MediaType.APPLICATION_JSON));
-		AID aid = (AID) response.getEntity();
-		
+		AID aid = response.readEntity(AID.class);
+		createdBrowsers++;
 		ACLMessage qmsg = new ACLMessage(Performative.REQUEST);
 		qmsg.receivers.add(aid);
 		qmsg.content = pathToBrowse; // Content is path to search for data

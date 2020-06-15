@@ -111,6 +111,8 @@ public class MessageManagerBean implements MessageManager {
 					ResteasyClient client = new ResteasyClientBuilder().build();
 					ResteasyWebTarget rtarget = client
 							.target("http://" + host.getAddress() + "/AT-WebCrawlerWAR/rest/client/messages");
+					
+					// Create new msg with single reciever
 					rtarget.request(MediaType.APPLICATION_JSON).post(Entity.entity(msg, MediaType.APPLICATION_JSON));
 				}
 			}

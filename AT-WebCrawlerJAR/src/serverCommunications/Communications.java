@@ -35,8 +35,8 @@ import util.WSMessageCreator;
 @AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class Communications {
 
-	private AgentCenter master = new AgentCenter("master", "fc23b60989e5.ngrok.io");
-	private AgentCenter agentCenter = new AgentCenter("localHost2", "d5cef4b86583.ngrok.io");
+	private AgentCenter master = new AgentCenter("master", "");
+	private AgentCenter agentCenter = new AgentCenter("localHost1", "6414552c6fcc.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
 
 	@EJB
@@ -78,7 +78,7 @@ public class Communications {
 		}
 	}
 
-	@Schedule(hour = "*", minute = "*", second = "*/45", info = "every ten minutes")
+	@Schedule(hour = "*", minute = "*/1", info = "every ten minutes")
 	public void heartBeat() {
 		System.out.println("Timer");
 		System.out.println("Checking health for: ");

@@ -65,8 +65,8 @@ public class Collector extends BaseAgent {
 			reply.content = this.getAid().getHost().getAddress();
 			reply.sender = id;
 			reply.ontology = file;
-			msm().post(reply);
 			agentManager.stopAgent(this.id);
+			msm().post(reply);
 			break;
 		default:
 			wsMessageCreator.log("Collector: invalid performative");

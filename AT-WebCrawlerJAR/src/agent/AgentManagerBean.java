@@ -5,24 +5,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.naming.NamingException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import node.AgentCenter;
 import serverCommunications.Communications;
-import serverCommunications.CommunicationsRest;
 import serverCommunications.ConnectionsBean;
 import util.AgentTypesJndiFinder;
 import util.ObjectFactory;
@@ -31,6 +28,7 @@ import util.WSMessageCreator;
 @Singleton
 @Remote(AgentManager.class)
 @LocalBean
+@AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class AgentManagerBean implements AgentManager {
 
 	private HashMap<AID, Agent> agents;
@@ -152,10 +150,13 @@ public class AgentManagerBean implements AgentManager {
 		return a;
 	}
 
+	@Lock(LockType.READ)
+	@AccessTimeout(value=50000)
 	public HashMap<AID, Agent> getAgents() {
 		return agents;
 	}
-
+	@Lock(LockType.WRITE)
+	@AccessTimeout(value=50000)
 	public void setAgents(HashMap<AID, Agent> agents) {
 		this.agents = agents;
 	}
