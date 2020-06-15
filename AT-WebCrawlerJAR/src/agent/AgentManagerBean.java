@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Remote;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.naming.NamingException;
 
@@ -25,13 +23,13 @@ import util.AgentTypesJndiFinder;
 import util.ObjectFactory;
 import util.WSMessageCreator;
 
-@Singleton
+@Stateless
 @Remote(AgentManager.class)
 @LocalBean
-@AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
 public class AgentManagerBean implements AgentManager {
 
-	private HashMap<AID, Agent> agents;
+	@EJB
+	private AgentDataBean agentsData;
 
 	@EJB
 	private AgentTypesJndiFinder agentTypesFinder;
@@ -44,10 +42,7 @@ public class AgentManagerBean implements AgentManager {
 	@Inject
 	ConnectionsBean communicate;
 
-	@PostConstruct
-	public void postConstruct() {
-		agents = new HashMap<AID, Agent>();
-	}
+	
 
 	@Override
 	public List<AgentType> getAvailableAgentClasses() {
@@ -60,7 +55,7 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public List<AID> getRunningAgents() {
-		Set<AID> set = agents.keySet();
+		Set<AID> set = agentsData.getAgents().keySet();
 		if (set.size() > 0) {
 			AID aid = set.iterator().next();
 			try {
@@ -78,7 +73,7 @@ public class AgentManagerBean implements AgentManager {
 				}
 			} catch (Exception ex) {
 				set.remove(aid);
-				agents.remove(aid);
+				agentsData.removeAgent(aid);
 				System.out.println("VELIKI CATCH");
 			}
 		}
@@ -102,11 +97,11 @@ public class AgentManagerBean implements AgentManager {
 		}
 
 		agent.init(aid);
-		agents.put(aid, agent);
+		agentsData.putAgent(aid, agent);
 
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(agents.keySet());
+			communicate.sendRunningAgentsToEveryone(agentsData.getAgents().keySet());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -116,11 +111,11 @@ public class AgentManagerBean implements AgentManager {
 
 	@Override
 	public void stopAgent(AID aid) {
-		Agent agent = agents.get(aid);
-		agents.remove(aid);
+		Agent agent = agentsData.getAgent(aid);
+		agentsData.removeAgent(aid);
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(agents.keySet());
+			communicate.sendRunningAgentsToEveryone(agentsData.getAgents().keySet());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -146,23 +141,27 @@ public class AgentManagerBean implements AgentManager {
 
 	public Agent getAgent(AID aid) {
 		Agent a = null;
-		a = agents.get(aid);
+		a = agentsData.getAgent(aid);
 		return a;
 	}
 
 	@Lock(LockType.READ)
 	@AccessTimeout(value=50000)
 	public HashMap<AID, Agent> getAgents() {
-		return agents;
+		return this.agentsData.getAgents();
 	}
+	
 	@Lock(LockType.WRITE)
 	@AccessTimeout(value=50000)
 	public void setAgents(HashMap<AID, Agent> agents) {
-		this.agents = agents;
+		this.agentsData.setAgents(agents);
 	}
 
 	public void putAgent(AID aid, Agent agent) {
-		agents.put(aid, agent);
+		agentsData.putAgent(aid, agent);
 	}
 
+	public void removeAgent(AID aid) {
+		agentsData.removeAgent(aid);
+	}
 }

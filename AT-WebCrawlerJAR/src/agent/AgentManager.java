@@ -21,4 +21,6 @@ public interface AgentManager {
 	public void putAgent(AID aid, Agent agent);
 	
 	public Agent getAgent(AID aid);
+	
+	public void removeAgent(AID aid);
 }

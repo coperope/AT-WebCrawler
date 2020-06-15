@@ -36,7 +36,7 @@ import util.WSMessageCreator;
 public class Communications {
 
 	private AgentCenter master = new AgentCenter("master", "");
-	private AgentCenter agentCenter = new AgentCenter("localHost1", "6414552c6fcc.ngrok.io");
+	private AgentCenter agentCenter = new AgentCenter("localHost3", "26f74a7578a6.ngrok.io");
 	private List<AgentCenter> connections = new ArrayList<AgentCenter>();
 
 	@EJB
