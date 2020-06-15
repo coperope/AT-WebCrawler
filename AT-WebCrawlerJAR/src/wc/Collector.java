@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import javax.ejb.EJB;
 import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -22,12 +22,14 @@ import org.jsoup.select.Elements;
 
 import agent.AID;
 import agent.Agent;
+import agent.AgentManagerBean;
 import agent.BaseAgent;
 import message.ACLMessage;
+import message.Performative;
 import util.JSON;
 import util.WSMessageCreator;
 
-@Stateless
+@Stateful
 @Remote(Agent.class)
 public class Collector extends BaseAgent {
 	private static final long serialVersionUID = 1L;
@@ -35,7 +37,9 @@ public class Collector extends BaseAgent {
 
 	@EJB
 	WSMessageCreator wsMessageCreator;
-
+	@EJB
+	AgentManagerBean agentManager;
+	
 	@Override
 	public void init(AID id) throws IOException {
 		this.id = id;
@@ -50,17 +54,23 @@ public class Collector extends BaseAgent {
 			String content = msg.content;
 			String url = content.split(" ")[0];
 			String file = content.split(" ")[1];
-			System.out.println(url);
-			System.out.println(file);
 			if (url.contains("green-acres")) {
 				ArrayList<Property> properties = scrapeGreenAcresSite(url);
 				if (properties != null) {
 					saveToFile(properties, file);
 				}
 			}
+			
+			ACLMessage reply = msg.makeReply(Performative.INFORM);
+			reply.content = this.getAid().getHost().getAddress();
+			reply.sender = id;
+			reply.ontology = file;
+			msm().post(reply);
+			agentManager.stopAgent(this.id);
 			break;
 		default:
 			wsMessageCreator.log("Collector: invalid performative");
+			agentManager.stopAgent(this.id);
 			break;
 		}
 
@@ -71,7 +81,8 @@ public class Collector extends BaseAgent {
 			ArrayList<Property> properties = new ArrayList<Property>();
 			Element nextPage = null;
 			String nextPageUrl = regionUrl;
-			do {
+			// COMMENTED FOR DEV AND TESTING PURPOSES, uncomment when fully working project is done
+			//do {
 				Connection connection = Jsoup.connect(nextPageUrl).userAgent(USER_AGENT);
 				Document htmlDocument = connection.get();
 				Elements elements = htmlDocument.getElementsByTag("figure");
@@ -81,7 +92,7 @@ public class Collector extends BaseAgent {
 					String url = element.select("a").first().absUrl("href");
 					System.out.println(url);
 					Property property = new Property();
-
+					property.setUrl(url);
 					Connection connectionProperty = Jsoup.connect(url).userAgent(USER_AGENT);
 					Document htmlDocumentProperty = connectionProperty.get();
 
@@ -94,17 +105,17 @@ public class Collector extends BaseAgent {
 						for (Node child : el.childNodes()) {
 							if (child instanceof TextNode && !((TextNode) child).isBlank()) {
 								if (i == 0) {
-									if (Double.parseDouble(((TextNode) child).text()) > 10) {
-										property.setHabitableArea(Double.parseDouble(((TextNode) child).text()));
+									if (Double.parseDouble(((TextNode) child).text().replaceAll(",", "")) > 10) {
+										property.setHabitableArea(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
 									} else { // No habitable area specified
-										property.setRooms(Double.parseDouble(((TextNode) child).text()));
+										property.setRooms(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
 										break;
 									}
 
 								} else if (i == 1) {
-									property.setRooms(Double.parseDouble(((TextNode) child).text()));
+									property.setRooms(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
 								} else if (i == 2) {
-									property.setBedrooms(Double.parseDouble(((TextNode) child).text()));
+									property.setBedrooms(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
 								}
 								i++;
 							}
@@ -124,8 +135,7 @@ public class Collector extends BaseAgent {
 				if (nextPage != null) {
 					nextPageUrl = nextPage.absUrl("href");
 				}
-
-			} while (nextPage != null);
+			//} while (nextPage != null);
 
 			return properties;
 		} catch (IOException e) {
@@ -138,7 +148,6 @@ public class Collector extends BaseAgent {
 		int index = file.lastIndexOf("/");
 		if (index != -1) {
 			String dir = file.substring(0, index);
-			System.out.println(dir);
 			File directory = new File(dir);
 			if (!directory.exists()) {
 				directory.mkdirs();

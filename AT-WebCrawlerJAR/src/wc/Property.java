@@ -7,6 +7,7 @@ public class Property {
 	private double rooms;
 	private double bedrooms;
 	private double price;
+	private String url;
 	
 	public Property() {
 		
@@ -41,6 +42,12 @@ public class Property {
 	}
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	@Override
 	public String toString() {
