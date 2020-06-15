@@ -61,12 +61,8 @@ public class Communications {
 
 			Set<AID> runningAgents = rest.getRunningAgents();
 
-			for (AID agent : runningAgents) {
-				agm.putAgent(agent, null);
-				System.out.println(agent);
-			}
-			
-			for (AID aid : agm.getAgents().keySet()) {
+			for (AID aid : runningAgents) {
+				agm.putAgent(aid, null);
 				System.out.println(aid);
 			}
 

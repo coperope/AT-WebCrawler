@@ -42,7 +42,7 @@ public class AgentManagerBean implements AgentManager {
 	@Inject
 	ConnectionsBean communicate;
 
-	
+
 
 	@Override
 	public List<AgentType> getAvailableAgentClasses() {
@@ -101,7 +101,7 @@ public class AgentManagerBean implements AgentManager {
 
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(agentsData.getAgents().keySet());
+			communicate.sendNewAgentToEveryone(aid);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -115,7 +115,7 @@ public class AgentManagerBean implements AgentManager {
 		agentsData.removeAgent(aid);
 		try {
 			wsMessageCreator.sendActiveAgents(getRunningAgents());
-			communicate.sendRunningAgentsToEveryone(agentsData.getAgents().keySet());
+			communicate.sendRemovedAgentToEveryone(aid);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -150,17 +150,19 @@ public class AgentManagerBean implements AgentManager {
 	public HashMap<AID, Agent> getAgents() {
 		return this.agentsData.getAgents();
 	}
-	
+
 	@Lock(LockType.WRITE)
 	@AccessTimeout(value=50000)
 	public void setAgents(HashMap<AID, Agent> agents) {
 		this.agentsData.setAgents(agents);
 	}
 
+	@Override
 	public void putAgent(AID aid, Agent agent) {
 		agentsData.putAgent(aid, agent);
 	}
 
+	@Override
 	public void removeAgent(AID aid) {
 		agentsData.removeAgent(aid);
 	}
