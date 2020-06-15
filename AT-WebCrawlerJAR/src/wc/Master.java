@@ -104,10 +104,13 @@ public class Master extends BaseAgent {
 		case CONFIRM:
 			wsMessageCreator.log("Master: Browser found the data");
 			String propertiesJsonString =  msg.content;
-			properties.addAll(JSON.mapper.readValue(propertiesJsonString, new TypeReference<List<Property>>(){}));
 			String path = msg.ontology;
-			regionAndCollectedMap.put(path, true);
 			--createdBrowsers;
+			
+			if (!regionAndCollectedMap.get(path)) {
+				properties.addAll(JSON.mapper.readValue(propertiesJsonString, new TypeReference<List<Property>>(){}));
+				regionAndCollectedMap.put(path, true);
+			}
 			
 			if (!regionAndCollectedMap.containsValue(false)) {
 				// Aggregate, sort... whatever... Send to user
@@ -130,11 +133,11 @@ public class Master extends BaseAgent {
 			String pathToScrape = msg.ontology;
 			--createdBrowsers;
 			// Run scraper
-			if (host.equals(communications.getAgentCenter().getAddress())) {
-				runCollectorLocally(pathToScrape);
-			} else {
-				runCollectorRemotelly(pathToScrape, host);
-			}
+//			if (host.equals(communications.getAgentCenter().getAddress())) {
+//				runCollectorLocally(pathToScrape);
+//			} else {
+//				runCollectorRemotelly(pathToScrape, host);
+//			}
 			
 			// Check other hosts
 			if (browserAgentsHostIndex.get(pathToScrape) == null) {
@@ -143,10 +146,14 @@ public class Master extends BaseAgent {
 					startBrowserRemotely(pathToScrape, null);
 				}
 			} else {
-				int nextHostIndex = (browserAgentsHostIndex.get(pathToScrape) + 1) % communications.getConnections().size();
+				int nextHostIndex = 0;
+				if (browserAgentsHostIndex.get(pathToScrape) + 1 < communications.getConnections().size()) {
+					nextHostIndex = browserAgentsHostIndex.get(pathToScrape) + 1;
+				}
 				if (nextHostIndex == 0) { 
-					// All hosts checked for data, none has it, wait for the first scraper to finish
+					// All hosts checked for data, none has it, run scraper localy for the given path
 					browserAgentsHostIndex.put(pathToScrape, browserAgentsHostIndex.get(pathToScrape));
+					runCollectorLocally(pathToScrape);
 				} else {
 					browserAgentsHostIndex.put(pathToScrape, nextHostIndex);
 					startBrowserRemotely(pathToScrape, null);
@@ -162,6 +169,8 @@ public class Master extends BaseAgent {
 
 			host = msg.content;
 			String pathToGetData = msg.ontology;
+			--createdCollectors;
+			
 			if (!regionAndCollectedMap.get(pathToGetData)) {
 				// Run browser
 				if (host.equals(communications.getAgentCenter().getAddress())) {
@@ -171,7 +180,7 @@ public class Master extends BaseAgent {
 				}
 			}
 			
-			if (--createdCollectors == 0 && !regionAndCollectedMap.containsValue(false)) {
+			if (createdCollectors == 0 && !regionAndCollectedMap.containsValue(false)) {
 				// Stop master agent when all created collectors are done to avoid errors with no running master aid
 				agentManager.stopAgent(this.id);
 			}
@@ -256,11 +265,11 @@ public class Master extends BaseAgent {
 		map.put("properties/green-acres/paris.json", "https://www.green-acres.fr/property-for-sale/paris");
 		map.put("properties/green-acres/hauts-de-seine.json", "https://www.green-acres.fr/property-for-sale/hauts-de-seine");
 		map.put("properties/green-acres/val-de-marne.json", "https://www.green-acres.fr/property-for-sale/val-de-marne");
-		map.put("properties/green-acres/seine-saint-denis.json", "https://www.green-acres.fr/property-for-sale/seine-saint-denis");
-		map.put("properties/green-acres/seine-et-marne.json", "https://www.green-acres.fr/property-for-sale/seine-et-marne");
-		map.put("properties/green-acres/val-d-oise.json", "https://www.green-acres.fr/property-for-sale/val-d-oise");
-		map.put("properties/green-acres/yvelines.json", "https://www.green-acres.fr/property-for-sale/yvelines");
-		map.put("properties/green-acres/essonne.json", "https://www.green-acres.fr/property-for-sale/essonne");
+//		map.put("properties/green-acres/seine-saint-denis.json", "https://www.green-acres.fr/property-for-sale/seine-saint-denis");
+//		map.put("properties/green-acres/seine-et-marne.json", "https://www.green-acres.fr/property-for-sale/seine-et-marne");
+//		map.put("properties/green-acres/val-d-oise.json", "https://www.green-acres.fr/property-for-sale/val-d-oise");
+//		map.put("properties/green-acres/yvelines.json", "https://www.green-acres.fr/property-for-sale/yvelines");
+//		map.put("properties/green-acres/essonne.json", "https://www.green-acres.fr/property-for-sale/essonne");
 
 		return map;
 	}

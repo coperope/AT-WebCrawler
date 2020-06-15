@@ -82,7 +82,8 @@ public class Collector extends BaseAgent {
 			Element nextPage = null;
 			String nextPageUrl = regionUrl;
 			// COMMENTED FOR DEV AND TESTING PURPOSES, uncomment when fully working project is done
-			//do {
+			int i = 0;
+			do {
 				Connection connection = Jsoup.connect(nextPageUrl).userAgent(USER_AGENT);
 				Document htmlDocument = connection.get();
 				Elements elements = htmlDocument.getElementsByTag("figure");
@@ -130,7 +131,8 @@ public class Collector extends BaseAgent {
 				if (nextPage != null) {
 					nextPageUrl = nextPage.absUrl("href");
 				}
-			//} while (nextPage != null);
+				i++;
+			} while (i < 6);
 
 			return properties;
 		} catch (IOException e) {
