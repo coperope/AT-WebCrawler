@@ -90,7 +90,6 @@ public class Collector extends BaseAgent {
 
 				for (Element element : elements) {
 					String url = element.select("a").first().absUrl("href");
-					System.out.println(url);
 					Property property = new Property();
 					property.setUrl(url);
 					Connection connectionProperty = Jsoup.connect(url).userAgent(USER_AGENT);
@@ -99,28 +98,24 @@ public class Collector extends BaseAgent {
 					Elements address = htmlDocumentProperty.select("#mainInfoAdvertPage > div > ul > li > a > p");
 					property.setAddress(address.text());
 
-					Elements details = htmlDocumentProperty.select("#mainInfoAdvertPage > div > ul > li");
-					int i = 0;
+					//Elements details = htmlDocumentProperty.select("#mainInfoAdvertPage > div > ul > li");
+					Elements details = htmlDocumentProperty.select("#mainInfoAdvertPage > div > ul > li > p");
 					for (Element el : details) {
-						for (Node child : el.childNodes()) {
-							if (child instanceof TextNode && !((TextNode) child).isBlank()) {
-								if (i == 0) {
-									if (Double.parseDouble(((TextNode) child).text().replaceAll(",", "")) > 10) {
-										property.setHabitableArea(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
-									} else { // No habitable area specified
-										property.setRooms(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
-										break;
-									}
-
-								} else if (i == 1) {
-									property.setRooms(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
-								} else if (i == 2) {
-									property.setBedrooms(Double.parseDouble(((TextNode) child).text().replaceAll(",", "")));
-								}
-								i++;
-							}
+						String info = el.text();
+						
+						if (info.equals("Habitable area")) {
+							property.setHabitableArea(Double.parseDouble(((TextNode)el.nextSibling()).text().replaceAll(",", "")));
+						} else if (info.equals("Rooms")) {
+							property.setRooms(Double.parseDouble(((TextNode)el.nextSibling()).text().replaceAll(",", "")));
+						} else if (info.equals("Bedrooms")) {
+							property.setBedrooms(Double.parseDouble(((TextNode)el.nextSibling()).text().replaceAll(",", "")));
+						} else if (info.equals("Land")) {
+							property.setLand(Double.parseDouble(((TextNode)el.nextSibling()).text().replaceAll(",", "")));
+						} else {
+							System.out.println(info);
 						}
 					}
+
 					Element price = htmlDocumentProperty.select(
 							"#descriptionBlockAdvertPage > div.item-content-part.price.item-ecology > div > h2 > span")
 							.first();
