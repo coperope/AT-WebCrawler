@@ -1,0 +1,60 @@
+<div class="row m-3 shadow-sm  m-1 bg-white rounded">
+  <div class="col-md-4 col-left">
+    <div *ngIf="estate">
+      <img class="car-Image shadow-sm bg-white rounded" src="{{'/vehicle/image/'}}" />
+    </div>
+    <div *ngIf="!estate">
+      <p style=" text-align: center; line-height: 150px; -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;"
+        unselectable="on" onselectstart="return false;" onmousedown="return false;">No images provided</p>
+    </div>
+  </div>
+  <div class="col-md-4 col-left d-flex justify-content-sm-start justify-content-center mt-3 align-items-center">
+    <ul class="vehicle-info mt-1">
+      <li>
+        <mat-icon matTooltip="Property location" [matTooltipPosition]="'below'"> location_on</mat-icon>
+        {{estate?.location}}
+      </li>
+      <li>
+        <mat-icon matTooltip="Property type" [matTooltipPosition]="'below'"> house_siding</mat-icon> {{estate?.type}}
+      </li>
+      <li>
+        <mat-icon matTooltip="Property Area" [matTooltipPosition]="'below'">open_with</mat-icon> {{estate?.area}}
+      </li>
+      <li>
+        <mat-icon matTooltip="Land area" [matTooltipPosition]="'below'">landscape</mat-icon> {{estate?.land}}
+      </li>
+      <li>
+        <mat-icon matTooltip="State" [matTooltipPosition]="'below'">home_work</mat-icon> {{estate?.state}}
+      </li>
+      <li>
+        <mat-icon matTooltip="Link to real site" [matTooltipPosition]="'below'">http</mat-icon> {{estate?.url}}
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-4 col-md-2 col-left">
+    <div class="row mt-3 d-flex justify-content-center align-self-center">
+
+    </div>
+    <div class="row d-flex justify-content-center align-self-center">
+      <div class="col-sm-4 col-md-1 d-flex justify-content-center align-self-center">
+        <img class="comment-icon mt-3" src="assets/images/views.png" alt="">
+      </div>
+      <div class="col-sm-4 col-md-3 d-flex justify-content-center align-self-center">
+        <span class="badge mt-3">{{estate?.views}} 5
+
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-1 col-left">
+    <div class="row mt-3 ml-3">
+      <label class="info-label">Price: </label>
+      <label>${{estate?.price}}1000</label>
+    </div>
+    <div class="row mt-3 ml-3" style="margin-bottom: 0; margin-right: 0;">
+    </div>
+    <div class="row mt-3 ml-3 mb-3" style="margin-bottom: 0; margin-right: 0;">
+    </div>
+  </div>
+</div>

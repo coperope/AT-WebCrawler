@@ -1,0 +1,70 @@
+#top {
+  background-color: #585858;
+  height: 1vh;
+}
+
+img {
+  height: 7vh;
+}
+
+#container {
+  color: #eeeeee;
+  display: flex;
+  padding-bottom: 0em;
+}
+
+.links {
+  margin-top: 0.25em;
+  padding-bottom: 0em;
+  margin-bottom: 0em;
+}
+
+.link {
+  display: inline-block;
+  line-height: 6vh;
+  padding-bottom: 0em;
+  margin-bottom: 0em;
+}
+
+.link:hover {
+  outline-style: solid;
+  outline-color: #4f18e8;
+}
+
+.active {
+  background-color: #4f18e8;
+  color: #eeeeee;
+}
+
+a {
+  text-decoration: none;
+  color: #585858;
+}
+
+#bottom {
+  background-color: #2d18e8;
+  height: 1vh;
+}
+
+.btn-outline-danger {
+  margin-top: 0.25em;
+  line-height: 6vh;
+  outline-color: #E81831;
+}
+
+.btn-outline-danger:hover {
+  background-color: #E81831;
+}
+ul {
+  list-style-type: none;
+ }
+
+.mat-icon {
+  font-family: 'Material Icons' !important;
+  vertical-align: middle;
+  margin-right: 1rem; 
+  margin-left: 0.5rem;
+  cursor: pointer;
+  color: #E81831;
+  outline: none;
+  }

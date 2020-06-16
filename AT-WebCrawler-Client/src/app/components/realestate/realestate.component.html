@@ -1,0 +1,29 @@
+<mat-tab-group>
+  <mat-tab label="Most viewed properties">
+      <div class="container">
+          <div class="row">
+              <div class="col-12">
+                  <app-realestate-listing [type]="'views'"></app-realestate-listing>
+              </div>
+          </div>
+      </div>
+  </mat-tab>
+  <mat-tab label="Properties on popular locations">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <app-realestate-listing [type]="'locations'"></app-realestate-listing>
+            </div>
+        </div>
+    </div>
+</mat-tab>
+  <mat-tab label="Statistics">
+      <div class="container">
+          <div class="row">
+              <div class="col-12">
+                  <app-statistics></app-statistics>
+              </div>
+          </div>
+      </div>
+  </mat-tab>
+</mat-tab-group>
