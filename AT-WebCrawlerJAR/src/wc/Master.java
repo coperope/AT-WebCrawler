@@ -144,6 +144,8 @@ public class Master extends BaseAgent {
 				if (communications.getConnections().size() > 0) {
 					browserAgentsHostIndex.put(pathToScrape, 0);
 					startBrowserRemotely(pathToScrape, null);
+				} else {
+					runCollectorLocally(pathToScrape);
 				}
 			} else {
 				int nextHostIndex = 0;
@@ -262,9 +264,13 @@ public class Master extends BaseAgent {
 	private HashMap<String, String> initializeSiteAndRegionHashmap(){
 		HashMap<String, String> map = new HashMap<String, String>();
 		
-		map.put("properties/green-acres/paris.json", "https://www.green-acres.fr/property-for-sale/paris");
-		map.put("properties/green-acres/hauts-de-seine.json", "https://www.green-acres.fr/property-for-sale/hauts-de-seine");
-		map.put("properties/green-acres/val-de-marne.json", "https://www.green-acres.fr/property-for-sale/val-de-marne");
+		map.put("properties/city-nekretnine.json","http://www.city-nekretnine.rs/pretraga.php?l=sr&filter=&property_category=");
+		map.put("properties/info-nekretnine.json","http://www.info-nekretnine.rs/pretraga.php?l=sr&filter=&property_category=");
+		map.put("properties/021-nekretnine.json","http://www.021-nekretnine.rs/pretraga.php?l=sr&filter=&property_category=");
+
+//		map.put("properties/green-acres/paris.json", "https://www.green-acres.fr/property-for-sale/paris");
+//		map.put("properties/green-acres/hauts-de-seine.json", "https://www.green-acres.fr/property-for-sale/hauts-de-seine");
+//		map.put("properties/green-acres/val-de-marne.json", "https://www.green-acres.fr/property-for-sale/val-de-marne");
 //		map.put("properties/green-acres/seine-saint-denis.json", "https://www.green-acres.fr/property-for-sale/seine-saint-denis");
 //		map.put("properties/green-acres/seine-et-marne.json", "https://www.green-acres.fr/property-for-sale/seine-et-marne");
 //		map.put("properties/green-acres/val-d-oise.json", "https://www.green-acres.fr/property-for-sale/val-d-oise");
