@@ -1,8 +1,8 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -16,24 +16,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import agent.AID;
 import agent.AgentManager;
 import agent.AgentType;
 import message.ACLMessage;
-import message.MessageManager;
 import message.MessageManagerBean;
 import message.Performative;
-import node.AgentCenter;
 import serverCommunications.Communications;
-import serverCommunications.CommunicationsRest;
-import util.ObjectFactory;
+import wc.DataRequestDTO;
 
 @Stateless
 @Path("/client")
@@ -106,6 +98,39 @@ public class ClientController implements ClientControllerRemote {
 	public List<String> getPerformatives() {
 		List<String> list = msm.getPerformatives();
 		return list;
+	}
+	
+	@POST
+	@Path("/properties")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void sendMessage(DataRequestDTO request) {
+		List<AgentType> agentTypes = agm.getAvailableAgentClasses();
+		AID master = null;
+		for (AgentType agentType : agentTypes) {
+			if (agentType.getName().equals("Master")) {
+				try {
+					master = agm.startServerAgent(agentType, "Master-"+ UUID.randomUUID());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if (master == null) {
+			System.out.println("Internal server error");
+			return;
+		}
+		String content = "";
+		for (int i = 0; i < request.getContent().size(); i++) {
+			content += request.getContent().get(i);
+			if (i != request.getContent().size() - 1) {
+				content += " ";
+			}
+		}
+		ACLMessage qmsg = new ACLMessage(Performative.REQUEST);
+		qmsg.receivers.add(master);
+		qmsg.content = content;
+		qmsg.ontology = request.getOntology();
+		msm.post(qmsg);
 	}
 
 }
