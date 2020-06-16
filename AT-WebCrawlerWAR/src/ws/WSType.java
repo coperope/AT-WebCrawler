@@ -4,5 +4,8 @@ public enum WSType {
 
 	Log,
 	AgentsTypes,
-	ActiveAgents
+	ActiveAgents,
+	Top100,
+	TopLocations,
+	Statistic
 }

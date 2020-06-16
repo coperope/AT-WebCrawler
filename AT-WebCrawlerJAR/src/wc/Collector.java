@@ -83,7 +83,7 @@ public class Collector extends BaseAgent {
 			int i = 0;
 			do {
 				Connection connection = Jsoup.connect(nextPageUrl).userAgent(USER_AGENT);
-				Document htmlDocument = connection.timeout(10 * 1000).get();
+				Document htmlDocument = connection.timeout(60 * 1000).get();
 				Elements elements = htmlDocument.getElementsByClass("listing");
 				//System.out.println(elements);
 
@@ -92,7 +92,7 @@ public class Collector extends BaseAgent {
 					Property property = new Property();
 					property.setUrl(propertyUrl);
 					Connection connectionProperty = Jsoup.connect(propertyUrl).userAgent(USER_AGENT);
-					Document htmlDocumentProperty = connectionProperty.timeout(10 * 1000).get();
+					Document htmlDocumentProperty = connectionProperty.timeout(60 * 1000).get();
 					
 					// Type
 					String query = "Vrsta";
@@ -198,15 +198,17 @@ public class Collector extends BaseAgent {
 					properties.add(property);
 				}
 				
-//
-				nextPage = htmlDocument.select("div.bottom_pagination > div > span > a").first();
+
+				nextPage = htmlDocument.select("div.bottom_pagination > div > span > a").last();
 				if (nextPage != null) {
 					nextPageUrl = nextPage.absUrl("href");
+					System.out.println("************ Next Page Url ************");
+					System.out.println(nextPageUrl);
 				}
 				i++;
 				System.out.println("--------- PAGE: " + i + " ------------");
-			//} while (i < 6); // Testing
-			} while (nextPage != null); // Real
+			} while (i < 50); // Testing
+//			} while (nextPage != null); // Real
 
 			return properties;
 		} catch (IOException e) {
