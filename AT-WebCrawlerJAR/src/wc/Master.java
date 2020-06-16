@@ -514,31 +514,31 @@ public class Master extends BaseAgent {
 
 			if (property.getSize() != null) {
 				Integer aproxValue = 50 * (1 + (int) (property.getSize() / 50));
-				if (this.data.get("SIZE").containsKey((aproxValue - 50) + " - " + aproxValue)) {
-					Integer value = this.data.get("SIZE").get((aproxValue - 50) + " - " + aproxValue);
-					this.data.get("SIZE").put((aproxValue - 50) + " - " + aproxValue, ++value);
+				if (this.data.get("SIZE").containsKey((aproxValue - 50) + "-" + aproxValue)) {
+					Integer value = this.data.get("SIZE").get((aproxValue - 50) + "-" + aproxValue);
+					this.data.get("SIZE").put((aproxValue - 50) + "-" + aproxValue, ++value);
 				} else {
-					this.data.get("SIZE").put((aproxValue - 50) + " - " + aproxValue, 1);
+					this.data.get("SIZE").put((aproxValue - 50) + "-" + aproxValue, 1);
 				}
 			}
 
 			if (property.getLand() != null) {
 				Integer aproxValue = 100 * (1 + (int) (property.getLand() / 100));
-				if (this.data.get("LAND").containsKey((aproxValue - 100) + " - " + aproxValue)) {
-					Integer value = this.data.get("LAND").get((aproxValue - 100) + " - " + aproxValue);
-					this.data.get("LAND").put((aproxValue - 100) + " - " + aproxValue, ++value);
+				if (this.data.get("LAND").containsKey((aproxValue - 100) + "-" + aproxValue)) {
+					Integer value = this.data.get("LAND").get((aproxValue - 100) + "-" + aproxValue);
+					this.data.get("LAND").put((aproxValue - 100) + "-" + aproxValue, ++value);
 				} else {
-					this.data.get("LAND").put((aproxValue - 100) + " - " + aproxValue, 1);
+					this.data.get("LAND").put((aproxValue - 100) + "-" + aproxValue, 1);
 				}
 			}
 
 			if (property.getPrice() != null) {
 				Integer aproxValue = 10000 * (1 + (int) (property.getPrice() / 10000));
-				if (this.data.get("PRICE").containsKey((aproxValue - 10000) + " - " + aproxValue)) {
-					Integer value = this.data.get("PRICE").get((aproxValue - 10000) + " - " + aproxValue);
-					this.data.get("PRICE").put((aproxValue - 10000) + " - " + aproxValue, ++value);
+				if (this.data.get("PRICE").containsKey((aproxValue - 10000) + "-" + aproxValue)) {
+					Integer value = this.data.get("PRICE").get((aproxValue - 10000) + "-" + aproxValue);
+					this.data.get("PRICE").put((aproxValue - 10000) + "-" + aproxValue, ++value);
 				} else {
-					this.data.get("PRICE").put((aproxValue - 10000) + " - " + aproxValue, 1);
+					this.data.get("PRICE").put((aproxValue - 10000) + "-" + aproxValue, 1);
 				}
 			}
 
