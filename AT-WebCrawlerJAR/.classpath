@@ -14,7 +14,7 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.11.0.rc1.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.11.0.rc1.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.11.0.rc1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.11.0.rc1.jar" sourcepath="/Users/damjanpantic/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.11.0.rc1/jackson-databind-2.11.0.rc1-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AT-WebCrawlerWAR"/>
 	<classpathentry kind="lib" path="lib/jsoup-1.13.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
