@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { Property } from 'src/app/model/Property.model';
 import { Router } from '@angular/router';
 import { RealEstateService } from 'src/app/services/RealEstate.service';
@@ -41,6 +41,14 @@ export class RealestateListingComponent implements OnInit {
       //   () => console.log('WS connection closed')
       // );
      }
+
+     ngOnChanges(changes: SimpleChanges) {
+      this.filteredProperties = this.dataSource;
+      this.filterType = '';
+      this.filterPrice = undefined;
+      this.filterSize = undefined;
+      this.filterLocation = '';
+    }
 
   ngOnInit(): void {
     if (this.type == 'views') {

@@ -408,33 +408,33 @@ public class Master extends BaseAgent {
 		switch (sortField) {
 		case "VIEWS":
 			if (sortType.equals("ASC")) {
-				properties.sort(Comparator.comparing(Property::getViews));
+				properties.sort(Comparator.comparing(Property::getViews, Comparator.nullsFirst(Comparator.naturalOrder())));
 			} else {
-				properties.sort(Comparator.comparing(Property::getViews).reversed());
+				properties.sort(Comparator.comparing(Property::getViews, Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
 			}
 			break;
 
 		case "SIZE":
 			if (sortType.equals("ASC")) {
-				properties.sort(Comparator.comparing(Property::getSize));
+				properties.sort(Comparator.comparing(Property::getSize, Comparator.nullsFirst(Comparator.naturalOrder())));
 			} else {
-				properties.sort(Comparator.comparing(Property::getSize).reversed());
+				properties.sort(Comparator.comparing(Property::getSize, Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
 			}
 			break;
 
 		case "LAND":
 			if (sortType.equals("ASC")) {
-				properties.sort(Comparator.comparing(Property::getLand));
+				properties.sort(Comparator.comparing(Property::getLand, Comparator.nullsFirst(Comparator.naturalOrder())));
 			} else {
-				properties.sort(Comparator.comparing(Property::getLand).reversed());
+				properties.sort(Comparator.comparing(Property::getLand, Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
 			}
 			break;
 
 		case "PRICE":
 			if (sortType.equals("ASC")) {
-				properties.sort(Comparator.comparing(Property::getPrice));
+				properties.sort(Comparator.comparing(Property::getPrice, Comparator.nullsFirst(Comparator.naturalOrder())));
 			} else {
-				properties.sort(Comparator.comparing(Property::getPrice).reversed());
+				properties.sort(Comparator.comparing(Property::getPrice, Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
 			}
 			break;
 
