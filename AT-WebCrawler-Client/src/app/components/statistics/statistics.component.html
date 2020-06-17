@@ -1,0 +1,103 @@
+<p>
+
+</p>
+<div class="chart-wrapper mb-3">
+  <canvas baseChart 
+  [datasets]="LocationData"
+  [labels]="LocationLabels"
+  [options]="LocationOptions"
+  [plugins]="LocationPlugins"
+  [legend]="LocationLegend"
+  [chartType]="LocationType"
+  [colors]="LocationColors" >
+</canvas>
+</div>
+<hr class="mt-3 mb-3">
+<div class="row mt-3">
+  <div class="col-md-6">
+    <div class="chart-wrapper">
+      <canvas baseChart 
+      [datasets]="PriceData"
+      [labels]="PriceLabels"
+      [options]="PriceOptions"
+      [plugins]="PricePlugins"
+      [legend]="PriceLegend"
+      [chartType]="PriceType"
+      [colors]="PriceColors" >
+    </canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="chart-wrapper">
+      <canvas baseChart 
+      [datasets]="AreaData"
+      [labels]="AreaLabels"
+      [options]="AreaOptions"
+      [plugins]="AreaPlugins"
+      [legend]="AreaLegend"
+      [chartType]="AreaType"
+      [colors]="AreaColors" >
+    </canvas>
+    </div>
+  </div>
+</div>
+
+<hr class="mt-3 mb-3">
+<div class="row mt-3">
+  <div class="col-md-6">
+    <div class="chart-wrapper">
+      <canvas baseChart 
+      [datasets]="TypeData"
+      [labels]="TypeLabels"
+      [options]="TypeOptions"
+      [plugins]="TypePlugins"
+      [legend]="TypeLegend"
+      [chartType]="TypeType"
+      [colors]="TypeColors" >
+    </canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="chart-wrapper">
+      <canvas baseChart 
+      [datasets]="StateData"
+      [labels]="StateLabels"
+      [options]="StateOptions"
+      [plugins]="StatePlugins"
+      [legend]="StateLegend"
+      [chartType]="StateType"
+      [colors]="StateColors" >
+    </canvas>
+    </div>
+  </div>
+</div>
+
+<hr class="mt-3 mb-3">
+<div class="row mt-3">
+  <div class="col-md-6">
+    <div class="chart-wrapper">
+      <canvas baseChart 
+      [datasets]="SizeData"
+      [labels]="SizeLabels"
+      [options]="SizeOptions"
+      [plugins]="SizePlugins"
+      [legend]="SizeLegend"
+      [chartType]="SizeType"
+      [colors]="SizeColors" >
+    </canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="chart-wrapper">
+      <canvas baseChart 
+      [datasets]="LandData"
+      [labels]="LandLabels"
+      [options]="LandOptions"
+      [plugins]="LandPlugins"
+      [legend]="LandLegend"
+      [chartType]="LandType"
+      [colors]="LandColors" >
+    </canvas>
+    </div>
+  </div>
+</div>
