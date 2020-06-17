@@ -42,11 +42,12 @@ getPropertiesByLocation(){
 
 }
 
-startStatistics(){
+startStatistics(message){
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
   });
-  return this.http.post(`${API_URL}/messages`, message, { headers, observe: 'response' })
+
+  return this.http.post(`${API_URL}/properties`, message, { headers, observe: 'response' })
     .pipe(
       map(response => {
         return response.body;

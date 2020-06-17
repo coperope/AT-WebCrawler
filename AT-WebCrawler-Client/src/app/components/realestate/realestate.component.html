@@ -2,8 +2,8 @@
   <mat-tab label="Most viewed properties">
       <div class="container">
           <div class="row">
-              <div class="col-12">
-                  <app-realestate-listing [type]="'views'"></app-realestate-listing>
+              <div class="col-12" >
+                  <app-realestate-listing [type]="'views'" [filteredProperties]="dataTop100"></app-realestate-listing>
               </div>
           </div>
       </div>
@@ -11,8 +11,8 @@
   <mat-tab label="Properties on popular locations">
     <div class="container">
         <div class="row">
-            <div class="col-12">
-                <app-realestate-listing [type]="'locations'"></app-realestate-listing>
+            <div class="col-12" >
+                <app-realestate-listing [type]="'location'" [filteredProperties]="dataLocation"></app-realestate-listing>
             </div>
         </div>
     </div>

@@ -1,3 +1,4 @@
+import { RealEstateService } from 'src/app/services/RealEstate.service';
 import { Component, OnInit } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
@@ -5,6 +6,7 @@ import { webSocket } from 'rxjs/webSocket';
 import { environment } from '../../../environments/environment';
 import { WSMessage } from 'src/app/model/WSMessage.model';
 import { Statistics } from 'src/app/model/Statistics.model';
+import { DataRequestDTO } from 'src/app/model/DataRequestDTO.model';
 
 @Component({
   selector: 'app-statistics',
@@ -152,12 +154,13 @@ export class StatisticsComponent implements OnInit {
 
 
 
-  constructor() { 
+  constructor(private realEstateService: RealEstateService) { 
     this.websocket.asObservable().subscribe(
       data => {
         const message = data as WSMessage;
         if (message.type === 'Statistic') {
           this.propertyStatistic = message.statistic;
+          console.log(this.propertyStatistic);
           this.fillInCharts();
         }
       },
@@ -167,7 +170,17 @@ export class StatisticsComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+    var message: DataRequestDTO = new DataRequestDTO();
+    message.content = ["properties/city-nekretnine.json","properties/info-nekretnine.json", "properties/021-nekretnine.json"];
+    message.ontology = "STATISTICS:SORT-VIEWS-DESC";
+    this.realEstateService.startStatistics(message).subscribe(
+      (data: any) => {
+        console.log(data);
+      },
+      (error) => {
+        alert(error);
+      }
+    );
   }
 
 
@@ -194,40 +207,62 @@ export class StatisticsComponent implements OnInit {
       }
     }
 
+    const ordered = {};
+    const unordered = this.propertyStatistic.price;
+    Object.keys(unordered).sort((a,b) => {
+      return Number.parseInt(a.split('-')[0]) < Number.parseInt(b.split('-')[0]) ? -1 : 1
+    }).forEach(function(key) {
+      ordered[key] = unordered[key];
+    });
     // Price
-    for(var key in this.propertyStatistic.location){
-      if (this.propertyStatistic.price.hasOwnProperty(key) && this.propertyStatistic.price[key]!=null) {
+    for(var key in ordered){
+      if (ordered.hasOwnProperty(key) && ordered[key]!=null) {
         this.PriceLabels.push(key);
-        this.PriceData[0].data.push(this.propertyStatistic.price[key]);
+        this.PriceData[0].data.push(ordered[key]);
       }
     }
 
     // State
-    for(var key in this.propertyStatistic.location){
+    for(var key in this.propertyStatistic.state){
       if (this.propertyStatistic.state.hasOwnProperty(key) && this.propertyStatistic.state[key]!=null) {
         this.StateLabels.push(key);
         this.StateData[0].data.push(this.propertyStatistic.state[key]);
       }
     }
 
+    const orderedArea = {};
+    const unorderedArea = this.propertyStatistic.area;
+    Object.keys(unorderedArea).sort((a,b) => {
+      return Number.parseInt(a.split('-')[0]) < Number.parseInt(b.split('-')[0]) ? -1 : 1
+    }).forEach(function(key) {
+      orderedArea[key] = unorderedArea[key];
+    });
     // Area
-    for(var key in this.propertyStatistic.location){
-      if (this.propertyStatistic.area.hasOwnProperty(key) && this.propertyStatistic.area[key]!=null) {
+    for(var key in orderedArea){
+      if (orderedArea.hasOwnProperty(key) && orderedArea[key]!=null) {
         this.AreaLabels.push(key);
-        this.AreaData[0].data.push(this.propertyStatistic.area[key]);
+        this.AreaData[0].data.push(orderedArea[key]);
       }
     }
 
+
+    const orderedSize = {};
+    const unorderedSize = this.propertyStatistic.size;
+    Object.keys(unorderedSize).sort((a,b) => {
+      return Number.parseInt(a.split('-')[0]) < Number.parseInt(b.split('-')[0]) ? -1 : 1
+    }).forEach(function(key) {
+      orderedSize[key] = unorderedSize[key];
+    });
     // Size
-    for(var key in this.propertyStatistic.location){
-      if (this.propertyStatistic.size.hasOwnProperty(key) && this.propertyStatistic.size[key]!=null) {
+    for(var key in orderedSize){
+      if (orderedSize.hasOwnProperty(key) && orderedSize[key]!=null) {
         this.SizeLabels.push(key);
-        this.SizeData[0].data.push(this.propertyStatistic.size[key]);
+        this.SizeData[0].data.push(orderedSize[key]);
       }
     }
 
     // Land
-    for(var key in this.propertyStatistic.location){
+    for(var key in this.propertyStatistic.land){
       if (this.propertyStatistic.land.hasOwnProperty(key) && this.propertyStatistic.land[key]!=null) {
         this.LandLabels.push(key);
         this.LandData[0].data.push(this.propertyStatistic.land[key]);
@@ -235,7 +270,7 @@ export class StatisticsComponent implements OnInit {
     }
 
     // Type
-    for(var key in this.propertyStatistic.location){
+    for(var key in this.propertyStatistic.type){
       if (this.propertyStatistic.type.hasOwnProperty(key) && this.propertyStatistic.type[key]!=null) {
         this.TypeLabels.push(key);
         this.TypeData[0].data.push(this.propertyStatistic.type[key]);

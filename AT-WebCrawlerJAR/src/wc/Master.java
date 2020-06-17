@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -306,7 +307,7 @@ public class Master extends BaseAgent {
 	}
 
 	private void runCollectorLocally(String pathToScrape) throws IOException {
-		AID aid = agentManager.startServerAgent(this.collectorType, "Collector-" + pathToScrape);
+		AID aid = agentManager.startServerAgent(this.collectorType, "Collector-" + UUID.randomUUID() + pathToScrape);
 		ACLMessage qmsg = new ACLMessage(Performative.REQUEST);
 		qmsg.receivers.add(aid);
 		qmsg.content = siteAndRegionMap.get(pathToScrape) + " " + pathToScrape; // Url to scrape and file to save it
@@ -319,7 +320,7 @@ public class Master extends BaseAgent {
 		// Create agent on remote server
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget rtarget = client.target("http://" + hostAddress
-				+ "/AT-WebCrawlerWAR/rest/client/agents/running/Collector/Collector-" + pathToScrape.replace("/", "-"));
+				+ "/AT-WebCrawlerWAR/rest/client/agents/running/Collector/Collector-" + UUID.randomUUID() + pathToScrape.replace("/", "-"));
 		Response response = rtarget.request(MediaType.APPLICATION_JSON)
 				.put(Entity.entity(null, MediaType.APPLICATION_JSON));
 		AID aid = response.readEntity(AID.class);
@@ -334,7 +335,7 @@ public class Master extends BaseAgent {
 	}
 
 	private void startBrowserLocally(String pathToBrowse) throws IOException {
-		AID aid = agentManager.startServerAgent(this.browserType, "Browser-" + pathToBrowse);
+		AID aid = agentManager.startServerAgent(this.browserType, "Browser-" + UUID.randomUUID() + pathToBrowse);
 		createdBrowsers++;
 		ACLMessage qmsg = new ACLMessage(Performative.REQUEST);
 		qmsg.receivers.add(aid);
@@ -353,7 +354,7 @@ public class Master extends BaseAgent {
 
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget rtarget = client.target("http://" + hostAddress
-				+ "/AT-WebCrawlerWAR/rest/client/agents/running/Browser/Browser-" + pathToBrowse.replace("/", "-"));
+				+ "/AT-WebCrawlerWAR/rest/client/agents/running/Browser/Browser-" + UUID.randomUUID() + pathToBrowse.replace("/", "-"));
 		Response response = rtarget.request(MediaType.APPLICATION_JSON)
 				.put(Entity.entity(null, MediaType.APPLICATION_JSON));
 		AID aid = response.readEntity(AID.class);
